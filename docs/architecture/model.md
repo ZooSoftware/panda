@@ -33,7 +33,6 @@ return `[tree, newId]` (`newId` is `null` when the operation isn't allowed).
 | `addNext` | insert a point right after this one in its chain | not a leaf |
 | `addBranch` | new branch starting with a sub point | not a leaf |
 | `addLeaf` | new branch that is a single leaf; any number per point | not a leaf |
-| `endChain` | append a leaf after this point | not a leaf, and last in its chain |
 | `reopen` | turn a leaf back into a point | a leaf |
 | `removePoint` | remove the point and all its branches; neighbours re-link | not the only root point |
 | `updatePoint` | title, content, color | always |

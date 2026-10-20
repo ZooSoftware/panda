@@ -36,10 +36,59 @@ top right when pinned (click to unpin), and on points with branches a bottom row
 `🍃 N` (leaf count) on the left and the collapse toggle on the right. Leaves are pill-shaped
 with a dashed border.
 
-## Toolbar
+## Control panel (`ControlPanel.tsx`)
 
-Title · Rotate · direction · line style · layout mode · Collapse/Expand all · Unpin all · Fit ·
-Import · Export JSON · Export README · Examples · New. Loading an example asks for confirmation.
+The tree title plus three groups of controls:
+
+| Group | Controls |
+|---|---|
+| File | New tree · Import JSON or README · Export JSON · Export README · Export image (PNG, JPG, SVG) · Load example (asks first) |
+| View | Rotate · Fit · Direction · Lines · Layout · Panel position · Theme |
+| Arrange | Collapse all / Expand all · Unpin all · a one-line controls hint |
+
+The panel can sit on any side (**default left**). On the left or right the groups are **tabs**;
+on the top or bottom they are a **menu bar** whose menus open on hover (or keyboard focus) and
+open upward at the bottom. Inside a menu, a button click or a select change drops focus so the
+menu closes once the pointer leaves.
+
+The point panel (inspector, or the multi-selection panel) sits **opposite** a side panel: right
+when the panel is left, top or bottom; left when the panel is right. Under 720px wide, a side
+panel becomes a block above the canvas.
+
+The panel position, the last tab and the theme are per-browser preferences in
+`localStorage['panda-ui']`, not part of the tree
+([0011](../decisions/0011-ui-preferences-stay-in-the-browser.md)).
+
+## Theme
+
+**System** (default), **Light** or **Dark**. Colors are CSS tokens on `:root`; dark values apply
+under `[data-theme='dark']`, or under `prefers-color-scheme: dark` when the theme is System (no
+attribute). React Flow gets the same value as `colorMode`. Point cards keep the user's colors in
+both themes, so their text and badges use fixed dark `--node-*` tokens.
+
+## Image export (`src/exportImage.ts`)
+
+PNG, JPG or SVG of the **whole diagram as drawn now**: the React Flow viewport is captured with a
+transform that frames every rendered node at scale 1, with 40px padding and the theme's
+background. Collapsed branches stay hidden, pins and line style stay as they are, selection
+outlines are hidden during the capture (`.exporting`). PNG and JPG are rendered at 2× (less if a
+side would pass 16000px). Why: [0012](../decisions/0012-image-export-captures-the-canvas.md).
+
+## Live file sync (`src/fileSync.ts`, `src/useFileSync.ts`)
+
+**Open file (live sync)** links an existing `.md`/`.json` and loads it; **Save to file (live
+sync)** writes the current tree to a new file and links it. While linked, the File group shows
+the file, its state (synced at …, saving, Reconnect, error) and **Stop sync**, and a 🔗 chip sits
+next to the title.
+
+| Direction | How |
+|---|---|
+| App → file | 300ms after the last edit, `serializeFor(name, tree)` (README for `.md`, JSON for `.json`) is written if it differs from what the file holds |
+| File → app | every second, if the file's `lastModified` changed and its text isn't what the app would write, `importText` loads it |
+| Reload | the handle is stored in IndexedDB (`panda` / `handles`); relinked at startup, or **Reconnect** if permission must be asked again |
+
+New tree, Import and Load example call `stop()` before replacing the tree. Chrome and Edge only.
+Why: [0013](../decisions/0013-live-file-sync-in-the-browser.md).
 
 ## Persistence
 

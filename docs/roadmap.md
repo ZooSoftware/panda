@@ -7,7 +7,7 @@ option, never a silent replacement.
 ## Done
 
 1. Tree model: chains, branches, leaves; title, plain-text content and color on every point.
-2. Editing: + Next, ⎇ Branch, 🍃 Leaf (any number per point), ⏹ End chain, Reopen, Delete.
+2. Editing: + Next, ⎇ Branch, 🍃 Leaf (any number per point), Reopen, Delete.
 3. Layout: `stacked` and `packed`; four directions with Rotate; lines on fixed sides or shortest path.
 4. Pinning by drag (grid units, rotates with the tree), Unpin one / selected / all.
 5. Collapse a point's branches, Collapse all / Expand all; `▸ +N` hidden count.
@@ -15,6 +15,11 @@ option, never a silent replacement.
 7. Box selection and group drag; Ctrl+drag moves a point with everything forward of it.
 8. Import/export: JSON, and README (Mermaid + outline + pins + embedded tree, lossless).
 9. Examples: "Learn web development", "Literature review (60 papers)".
+11. Control panel on any side (default left) with File / View / Arrange groups: tabs on a side,
+    hover menus on top/bottom; the point panel sits opposite a side panel.
+12. Helvetica font (as draw.io); System / Light / Dark theme.
+13. Image export: PNG, JPG, SVG of the whole diagram as drawn.
+14. Live sync with a `.md`/`.json` file on disk, both directions, surviving reloads (Chrome/Edge).
 10. Claude setup and these docs; husky + commitlint for Conventional Commit messages.
 
 ## Later
@@ -23,7 +28,9 @@ option, never a silent replacement.
 - A user guide (`README.md` at the top level).
 - Line style per connection, not only per tree.
 - Leaf count in the README outline.
-- Import a hand-written README outline (no embedded data).
+- Import a hand-written README outline (no embedded data). With live sync this would let hand
+  edits to the outline flow into the app; today they are ignored and regenerated.
+- Pure-SVG image export (no `foreignObject`), for vector editors ([0012](decisions/0012-image-export-captures-the-canvas.md)).
 - Rich content: Markdown, links, tags, status.
 - A layout mode that keeps a point's branches under the point itself, for the packed-layout quirk below.
 

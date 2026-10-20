@@ -55,7 +55,7 @@ the main chain, papers as leaves: see the example in `src/examples/`).
 
 ## What the editor does
 
-- Build the tree with quick actions on a point: **+ Next**, **⎇ Branch**, **🍃 Leaf**, **⏹ End chain**.
+- Build the tree with quick actions on a point: **+ Next**, **⎇ Branch**, **🍃 Leaf**.
 - Automatic layout (stacked or packed), rotatable in four directions; lines on fixed sides or
   by the shortest path.
 - Drag to **pin** a point; pins rotate with the tree. Box-select many points, or Ctrl+drag a

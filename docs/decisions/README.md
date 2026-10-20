@@ -26,3 +26,7 @@ and what else was considered. Records explain **why**; how things work today is 
 | [0008](0008-react-flow-canvas-own-layout.md) | React Flow draws the canvas; the layout is our own | editor | 2026-10-20 |
 | [0009](0009-mouse-and-key-controls.md) | Left-drag selects, Shift adds, Ctrl moves forward points | editor | 2026-10-20 |
 | [0010](0010-bun-vite-react.md) | Bun, Vite and React; no server | stack | 2026-10-20 |
+| [0011](0011-ui-preferences-stay-in-the-browser.md) | UI preferences stay in the browser, not in the tree | editor | 2026-10-20 |
+| [0012](0012-image-export-captures-the-canvas.md) | Image export captures the canvas as drawn | export | 2026-10-20 |
+| [0013](0013-live-file-sync-in-the-browser.md) | Live file sync runs in the browser (File System Access API) | export | 2026-10-20 |
+| [0014](0014-leaves-only-as-branches.md) | Leaves are added only as branches; no "End chain" | model | 2026-10-20 |

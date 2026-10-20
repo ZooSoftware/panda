@@ -24,8 +24,16 @@ description: Test the panda editor end to end in Chrome (claude-in-chrome), back
      and `mouseup` on `window`, all with `ctrlKey: true, view: window, buttons: 1`.
    - `window.confirm` (loading an example) blocks the extension: set `window.confirm = () => true`
      first, then change the select with the native value setter and a `change` event.
-   - The export buttons download files: don't click them without the user's OK; test the
-     exporters in `model.test.ts` or with a small `bun` script instead.
+   - The export buttons download files: don't click them without the user's OK. Test the text
+     exporters in `model.test.ts`; test images in the page with
+     `await import('/src/exportImage.ts')` (nodes rebuilt from `.react-flow__node` transforms),
+     then decode the data URL. Don't print data URLs: the tool blocks them as query data.
+   - Also back up and restore `localStorage['panda-ui']` when the test changes the panel or theme.
+   - Live file sync: the system file picker can't be automated. Link an origin-private file
+     instead: `const fh = await (await navigator.storage.getDirectory()).getFileHandle('t.md',
+     { create: true }); await window.__pandaSync.link(fh, 'write')` (dev only). Afterwards click
+     Stop sync (clears the remembered handle in IndexedDB, or the user's next reload relinks the
+     test file) and `removeEntry('t.md')`.
 6. **Restore** the user's tree, reload, and close your tab:
    ```js
    localStorage.setItem('panda-tree', localStorage.getItem('panda-tree-before-test'));

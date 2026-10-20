@@ -1,6 +1,6 @@
 # 0002. A leaf ends its chain; a point can grow any number of leaves
 
-- **Status:** accepted
+- **Status:** accepted; the **End chain** action is superseded by [0014](0014-leaves-only-as-branches.md)
 - **Date:** 2026-10-20
 - **Where:** first design; the "only one leaf per point" bug report; `model/tree.ts`
   (`capabilities`, `addLeaf`, `endChain`, `parseTree`)

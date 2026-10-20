@@ -17,6 +17,11 @@ paths:
 - Controls ([0009](../../docs/decisions/0009-mouse-and-key-controls.md)): left-drag on the pane
   draws a selection box, Shift+click toggles selection, Ctrl+drag moves a point with everything
   forward of it, pan is right/middle drag, Space+drag or scroll. Don't reassign these silently.
-- Colors and sizes come from the `:root` tokens in `styles.css`. Node height is fixed (72px);
-  the layout spacing in `layout.ts` assumes it.
+- Colors and sizes come from the `:root` tokens in `styles.css`; every new color needs a dark
+  value too (both the `[data-theme='dark']` block and the `prefers-color-scheme` block). Inside
+  point cards use the fixed `--node-*` tokens: cards keep the user's light colors in both themes.
+  Node height is fixed (72px); the layout spacing in `layout.ts` assumes it.
+- Editor-chrome settings (panel position, tabs) go into `UiPrefs` / `localStorage['panda-ui']`,
+  never into the tree ([0011](../../docs/decisions/0011-ui-preferences-stay-in-the-browser.md)).
+  New controls go into one of the three panel groups (File, View, Arrange), not a new group.
 - Verify every UI change in Chrome with the `browser-test` skill.

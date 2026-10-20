@@ -22,10 +22,13 @@ src/
     exporters.ts   toJSON · toMarkdown (Mermaid, outline, pins, embedded data) · importText
     model.test.ts
   components/
+    ControlPanel.tsx the app's controls in groups: tabs on a side, hover menus on top/bottom
     PointNode.tsx    the node card: title, content, badges, quick-action toolbar, handles
     Inspector.tsx    side panel for one selected point
     FloatingEdge.tsx straight edge between nearest borders ("shortest path" lines)
   examples/ · sample.ts                    example trees
+  exportImage.ts                           PNG/JPG/SVG capture of the canvas
+  fileSync.ts · useFileSync.ts             live link to a file on disk (File System Access API)
   App.tsx                                  state + wiring
 ```
 

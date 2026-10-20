@@ -10,13 +10,16 @@ Why: [0010](../decisions/0010-bun-vite-react.md).
 | Language | TypeScript, strict, ESM | 5.6.3 | everywhere | — |
 | UI | React | 18.3.1 | `App.tsx`, `components/` | — |
 | Canvas (pan, zoom, drag, selection, edges) | React Flow (`@xyflow/react`) | 12.12.0 | `App.tsx`, `components/` | [react-flow.md](react-flow.md) |
+| Image export (PNG, JPG, SVG) | html-to-image (pinned: React Flow's docs use this version) | 1.11.11 | `src/exportImage.ts` | [0012](../decisions/0012-image-export-captures-the-canvas.md) |
+| Live file sync | File System Access API + IndexedDB (browser built-ins, Chrome/Edge) | — | `src/fileSync.ts` | [0013](../decisions/0013-live-file-sync-in-the-browser.md) |
+| Font | Helvetica, then Arial (draw.io's default diagram font), no web font | — | `styles.css` | — |
 | Layout | our own grid layout (no library) | — | `model/layout.ts` | [layout](../architecture/layout.md) |
 | Dev server, bundler | Vite + `@vitejs/plugin-react` | 5.4.21, 4.7.0 | `vite.config.ts` | — |
 | Tests | Vitest | 2.1.9 | `model/model.test.ts` | — |
 | Commit messages | husky + commitlint (`config-conventional`) | husky 9, commitlint 21 | `.husky/commit-msg`, `commitlint.config.js` | [bun.md](bun.md) |
 | Diagram in the README | Mermaid (rendered by GitHub, not a dependency) | — | `model/exporters.ts` | [readme-export](../reference/readme-export.md) |
 
-Runtime dependencies are only `react`, `react-dom` and `@xyflow/react`. Adding one needs a
+Runtime dependencies are only `react`, `react-dom`, `@xyflow/react` and `html-to-image`. Adding one needs a
 reason on its page here.
 
 ## Considered, not used (yet)
