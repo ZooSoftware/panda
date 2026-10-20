@@ -16,8 +16,8 @@ import {
   setCollapsed,
   visiblePoints,
   type Tree,
-} from './tree';
-import { tree, yearsTree } from './fixtures';
+} from '../../src/core/tree';
+import { tree, yearsTree } from '../fixtures';
 
 describe('editing', () => {
   it('inserts next point after the given one', () => {

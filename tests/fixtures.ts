@@ -1,6 +1,6 @@
-// Trees shared by the core tests. Not used by the app.
+// Trees shared by the tests.
 
-import { makePoint, type Tree } from './tree';
+import { makePoint, type Tree } from '../src/core/tree';
 
 /** A ─ B ─ C, where B grows one branch holding B1. */
 export function tree(): Tree {

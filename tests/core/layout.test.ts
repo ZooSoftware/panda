@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
-import { makePoint, setCollapsed, type Tree } from './tree';
-import { layoutGrid, toPin, toPixels } from './layout';
-import { nestedTree, tree, yearsTree } from './fixtures';
+import { makePoint, setCollapsed, type Tree } from '../../src/core/tree';
+import { layoutGrid, toPin, toPixels } from '../../src/core/layout';
+import { nestedTree, tree, yearsTree } from '../fixtures';
 
 describe('layout', () => {
   it('stacked: gives every branch its own rows, later points nearest', () => {

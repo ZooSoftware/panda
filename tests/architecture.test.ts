@@ -1,4 +1,4 @@
-// Enforces the folder boundaries (docs/decisions/0015):
+// Enforces the folder boundaries in src/ (docs/decisions/0015):
 //   core/      imports only core/, and no packages: pure TypeScript
 //   shared/    imports core/ and shared/
 //   features/x imports core/, shared/ and its own folder, never another feature
@@ -6,7 +6,8 @@
 
 import { describe, expect, it } from 'vitest';
 
-const sources = import.meta.glob(['./**/*.ts', './**/*.tsx', '!./**/*.test.ts', '!./architecture.test.ts'], {
+// Keys look like '../src/core/tree.ts'.
+const sources = import.meta.glob(['../src/**/*.ts', '../src/**/*.tsx'], {
   query: '?raw',
   import: 'default',
   eager: true,
@@ -15,7 +16,7 @@ const sources = import.meta.glob(['./**/*.ts', './**/*.tsx', '!./**/*.test.ts', 
 type Layer = 'core' | 'shared' | 'app' | `feature:${string}` | 'root';
 
 function layerOf(path: string): Layer {
-  const [top, sub] = path.replace(/^\.\//, '').split('/');
+  const [top, sub] = path.replace(/^\.\.\/src\//, '').split('/');
   if (top === 'core' || top === 'shared' || top === 'app') return top;
   if (top === 'features') return `feature:${sub}`;
   return 'root';

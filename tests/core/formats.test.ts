@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
-import { setCollapsed, setPin } from './tree';
-import { importText, toJSON, toMarkdown } from './formats';
-import { tree } from './fixtures';
+import { setCollapsed, setPin } from '../../src/core/tree';
+import { importText, toJSON, toMarkdown } from '../../src/core/formats';
+import { tree } from '../fixtures';
 
 describe('import / export', () => {
   it('round-trips JSON', () => {
