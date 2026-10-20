@@ -7,7 +7,6 @@ interface Props {
   onAddNext(): void;
   onAddBranch(): void;
   onAddLeaf(): void;
-  onEndChain(): void;
   onReopen(): void;
   onRemove(): void;
   onUnpin(): void;
@@ -20,7 +19,6 @@ export function Inspector({
   onAddNext,
   onAddBranch,
   onAddLeaf,
-  onEndChain,
   onReopen,
   onRemove,
   onUnpin,
@@ -64,13 +62,7 @@ export function Inspector({
         <button disabled={!caps.addBranch} onClick={onAddLeaf} title="New branch that is a single leaf">
           🍃 Add leaf
         </button>
-        {caps.reopen ? (
-          <button onClick={onReopen}>↺ Reopen chain</button>
-        ) : (
-          <button disabled={!caps.endChain} onClick={onEndChain} title="Only the last point of a chain can end it">
-            ⏹ End chain with leaf
-          </button>
-        )}
+        {caps.reopen && <button onClick={onReopen}>↺ Reopen chain</button>}
         {point.pin && <button onClick={onUnpin}>📌 Unpin</button>}
         <button className="danger" disabled={!caps.remove} onClick={onRemove}>
           Delete{point.branches.length > 0 ? ' (with branches)' : ''}

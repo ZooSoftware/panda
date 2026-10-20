@@ -19,7 +19,6 @@ export interface NodeActions {
   addNext(id: string): void;
   addBranch(id: string): void;
   addLeaf(id: string): void;
-  endChain(id: string): void;
   unpin(id: string): void;
   toggleCollapsed(id: string): void;
 }
@@ -72,11 +71,6 @@ function PointNodeView({ id, data, selected }: NodeProps<PointNodeType>) {
         {caps.addBranch && (
           <button onClick={() => actions.addLeaf(id)} title="New branch that is a single leaf">
             🍃 Leaf
-          </button>
-        )}
-        {caps.endChain && (
-          <button onClick={() => actions.endChain(id)} title="Append a leaf after this point, ending its chain">
-            ⏹ End chain
           </button>
         )}
       </NodeToolbar>

@@ -134,21 +134,18 @@ export function countLeaves(point: Point): number {
 export interface Capabilities {
   addNext: boolean;
   addBranch: boolean;
-  endChain: boolean;
   reopen: boolean;
   remove: boolean;
 }
 
 export function capabilities(tree: Tree, id: string): Capabilities {
   const loc = findPoint(tree, id);
-  if (!loc) return { addNext: false, addBranch: false, endChain: false, reopen: false, remove: false };
+  if (!loc) return { addNext: false, addBranch: false, reopen: false, remove: false };
   const isLeaf = loc.point.kind === 'leaf';
-  const isLast = loc.index === loc.chain.length - 1;
   const onlyRootPoint = loc.parent === null && loc.chain.length === 1;
   return {
     addNext: !isLeaf,
     addBranch: !isLeaf,
-    endChain: !isLeaf && isLast,
     reopen: isLeaf,
     remove: !onlyRootPoint,
   };
@@ -193,13 +190,6 @@ export function addBranch(tree: Tree, id: string): [Tree, string | null] {
 /** Grow a new branch from `id` that is just a leaf. A point can have any number. */
 export function addLeaf(tree: Tree, id: string): [Tree, string | null] {
   return growBranch(tree, id, makePoint({ kind: 'leaf', title: 'Leaf', color: PALETTE[2] }));
-}
-
-/** Append a leaf after `id`, which must be the last point of its chain. */
-export function endChain(tree: Tree, id: string): [Tree, string | null] {
-  if (!capabilities(tree, id).endChain) return [tree, null];
-  const leaf = makePoint({ kind: 'leaf', title: 'End', color: PALETTE[2] });
-  return [edit(tree, id, ({ chain }) => chain.push(leaf)), leaf.id];
 }
 
 /** Turn a leaf back into a regular point so its chain can continue. */

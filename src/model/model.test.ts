@@ -4,7 +4,6 @@ import {
   addLeaf,
   addNext,
   capabilities,
-  endChain,
   findPoint,
   makePoint,
   parseTree,
@@ -59,12 +58,12 @@ describe('editing', () => {
     expect(addLeaf(t, a.branches[0][0].id)[1]).toBeNull();
   });
 
-  it('only lets the last point of a chain end with a leaf', () => {
-    expect(endChain(tree(), 'a')[1]).toBeNull();
-    const [t, leafId] = endChain(tree(), 'c');
-    expect(findPoint(t, leafId!)?.point.kind).toBe('leaf');
+  it('lets nothing grow from a leaf, until it is reopened', () => {
+    const [t, leafId] = addLeaf(tree(), 'c');
     expect(capabilities(t, leafId!)).toMatchObject({ addNext: false, addBranch: false, reopen: true });
-    expect(findPoint(reopen(t, leafId!), leafId!)?.point.kind).toBe('point');
+    const reopened = reopen(t, leafId!);
+    expect(findPoint(reopened, leafId!)?.point.kind).toBe('point');
+    expect(capabilities(reopened, leafId!)).toMatchObject({ addNext: true, addBranch: true, reopen: false });
   });
 
   it('collapses and expands every point at once', () => {

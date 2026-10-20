@@ -1,15 +1,56 @@
 :root {
   --bg: #f8fafc;
   --panel: #ffffff;
+  --hover: #f4f4f5;
   --border: #d4d4d8;
   --text: #18181b;
   --muted: #71717a;
   --accent: #2563eb;
   --danger: #dc2626;
+  --danger-bg: #fef2f2;
   --chain: #52525b;
   --branch: #a1a1aa;
-  font-family: system-ui, -apple-system, 'Segoe UI', sans-serif;
+  /* Node cards keep the user's light colors in both themes, so their text stays dark. */
+  --node-text: #18181b;
+  --node-muted: #3f3f46;
+  --node-chip: rgb(255 255 255 / 0.85);
+  /* draw.io's default diagram font. */
+  font-family: Helvetica, Arial, sans-serif;
   color: var(--text);
+  color-scheme: light;
+}
+
+/* Dark: chosen explicitly, or following the system when the theme is "System". */
+:root[data-theme='dark'] {
+  --bg: #18181b;
+  --panel: #232326;
+  --hover: #2e2e33;
+  --border: #3f3f46;
+  --text: #f4f4f5;
+  --muted: #a1a1aa;
+  --accent: #60a5fa;
+  --danger: #f87171;
+  --danger-bg: #3b1d1d;
+  --chain: #a1a1aa;
+  --branch: #71717a;
+  color-scheme: dark;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme='light']) {
+    --bg: #18181b;
+    --panel: #232326;
+    --hover: #2e2e33;
+    --border: #3f3f46;
+    --text: #f4f4f5;
+    --muted: #a1a1aa;
+    --accent: #60a5fa;
+    --danger: #f87171;
+    --danger-bg: #3b1d1d;
+    --chain: #a1a1aa;
+    --branch: #71717a;
+    color-scheme: dark;
+  }
 }
 
 * {
@@ -37,7 +78,18 @@ select {
   border: 1px solid var(--border);
   border-radius: 6px;
   background: var(--panel);
+  color: var(--text);
   cursor: pointer;
+}
+
+input,
+textarea {
+  background: var(--panel);
+  color: var(--text);
+}
+
+.react-flow {
+  --xy-background-color: var(--bg);
 }
 
 button:hover:not(:disabled) {
@@ -51,18 +103,44 @@ button:disabled {
 
 .app {
   display: flex;
-  flex-direction: column;
   height: 100%;
 }
 
-.toolbar {
+.app.panel-left {
+  flex-direction: row;
+}
+
+.app.panel-right {
+  flex-direction: row-reverse;
+}
+
+.app.panel-top {
+  flex-direction: column;
+}
+
+.app.panel-bottom {
+  flex-direction: column-reverse;
+}
+
+.main {
+  flex: 1;
+  min-width: 0;
+  min-height: 0;
   display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: 12px;
-  padding: 8px 12px;
-  border-bottom: 1px solid var(--border);
+  flex-direction: column;
+}
+
+/* Control panel */
+
+.control-panel {
   background: var(--panel);
+  z-index: 10;
+}
+
+.panel-head {
+  display: flex;
+  align-items: center;
+  gap: 8px;
 }
 
 .logo {
@@ -70,13 +148,14 @@ button:disabled {
 }
 
 .tree-title {
-  flex: 1 1 180px;
-  min-width: 120px;
+  flex: 1;
+  min-width: 0;
   padding: 4px 8px;
   border: 1px solid transparent;
   border-radius: 6px;
   font-weight: 600;
   font-size: 16px;
+  background: transparent;
 }
 
 .tree-title:hover,
@@ -84,17 +163,157 @@ button:disabled {
   border-color: var(--border);
 }
 
-.group {
+.group-body {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.group-body > button {
+  text-align: left;
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  font-size: 13px;
+  color: var(--muted);
+}
+
+.field select {
+  width: 100%;
+  color: var(--text);
+}
+
+.field-inline {
   display: flex;
   gap: 6px;
-  flex-wrap: wrap;
+}
+
+.field-inline button {
+  flex: 1;
+}
+
+/* Side panel: groups are tabs */
+
+.control-panel.side {
+  width: 250px;
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+}
+
+.control-panel.side.left {
+  border-right: 1px solid var(--border);
+}
+
+.control-panel.side.right {
+  border-left: 1px solid var(--border);
+}
+
+.control-panel.side .panel-head {
+  padding: 10px 12px;
+  border-bottom: 1px solid var(--border);
+}
+
+.tabs {
+  display: flex;
+  border-bottom: 1px solid var(--border);
+}
+
+.tabs button {
+  flex: 1;
+  padding: 8px 4px;
+  border: none;
+  border-bottom: 2px solid transparent;
+  border-radius: 0;
+  background: none;
+  color: var(--muted);
+}
+
+.tabs button.active {
+  border-bottom-color: var(--accent);
+  color: var(--accent);
+  font-weight: 600;
+}
+
+.tab-body {
+  padding: 12px;
+}
+
+/* Top/bottom bar: groups are menus that open on hover */
+
+.control-panel.bar {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 6px 12px;
+}
+
+.control-panel.bar.top {
+  border-bottom: 1px solid var(--border);
+}
+
+.control-panel.bar.bottom {
+  border-top: 1px solid var(--border);
+}
+
+.control-panel.bar .panel-head {
+  flex: 0 1 320px;
+  min-width: 140px;
+}
+
+.menus {
+  display: flex;
+  gap: 2px;
+}
+
+.menu {
+  position: relative;
+}
+
+.menu-trigger {
+  border-color: transparent;
+  background: none;
+}
+
+.menu:hover .menu-trigger,
+.menu:focus-within .menu-trigger {
+  background: var(--hover);
+  border-color: var(--border);
+}
+
+.dropdown {
+  display: none;
+  position: absolute;
+  left: 0;
+  top: 100%;
+  width: 240px;
+  padding: 12px;
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  box-shadow: 0 6px 20px rgb(0 0 0 / 0.12);
+}
+
+.control-panel.bar.bottom .dropdown {
+  top: auto;
+  bottom: 100%;
+}
+
+.menu:hover .dropdown,
+.menu:focus-within .dropdown {
+  display: block;
 }
 
 .error {
   padding: 6px 12px;
-  background: #fef2f2;
+  background: var(--danger-bg);
   color: var(--danger);
-  border-bottom: 1px solid #fecaca;
+  border-bottom: 1px solid var(--border);
 }
 
 .error button {
@@ -106,6 +325,15 @@ button:disabled {
   flex: 1;
   display: flex;
   min-height: 0;
+}
+
+.workspace.inspector-left {
+  flex-direction: row-reverse;
+}
+
+.workspace.inspector-left .inspector {
+  border-left: none;
+  border-right: 1px solid var(--border);
 }
 
 .canvas {
@@ -124,6 +352,7 @@ button:disabled {
   border: 1.5px solid var(--chain);
   border-radius: 8px;
   box-shadow: 0 1px 3px rgb(0 0 0 / 0.12);
+  color: var(--node-text);
 }
 
 .point-node.leaf {
@@ -156,7 +385,7 @@ button:disabled {
 .point-content {
   margin-top: 4px;
   font-size: 12px;
-  color: #3f3f46;
+  color: var(--node-muted);
   white-space: pre-wrap;
   display: -webkit-box;
   -webkit-line-clamp: 2;
@@ -287,7 +516,18 @@ button:disabled {
 }
 
 @media (max-width: 720px) {
-  .workspace {
+  .app.panel-left,
+  .app.panel-right {
+    flex-direction: column;
+  }
+  .control-panel.side {
+    width: 100%;
+    max-height: 40%;
+    border: none;
+    border-bottom: 1px solid var(--border);
+  }
+  .workspace,
+  .workspace.inspector-left {
     flex-direction: column;
   }
   .inspector {
@@ -319,7 +559,8 @@ button:disabled {
   font-size: 11px;
   line-height: 16px;
   border-radius: 8px;
-  background: rgb(255 255 255 / 0.85);
+  color: var(--node-muted);
+  background: var(--node-chip);
   border: 1px solid var(--border);
 }
 
@@ -328,11 +569,77 @@ button:disabled {
   font-size: 11px;
   line-height: 16px;
   border-radius: 8px;
-  background: rgb(255 255 255 / 0.85);
+  color: var(--node-muted);
+  background: var(--node-chip);
 }
 
+/* Fixed blue: the chip is light in both themes. */
 .collapse-toggle.collapsed {
-  border-color: var(--accent);
-  color: var(--accent);
+  border-color: #2563eb;
+  color: #2563eb;
   font-weight: 600;
 }
+
+/* While an image is captured: no selection outlines or selection box. */
+.react-flow.exporting .point-node.selected {
+  outline: none;
+}
+
+.react-flow.exporting .react-flow__nodesselection {
+  display: none;
+}
+
+/* Live file sync */
+
+.sync-box {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 8px;
+  border: 1px solid var(--border);
+  border-left: 3px solid var(--sync-color);
+  border-radius: 6px;
+  --sync-color: #16a34a;
+}
+
+.sync-box.saving {
+  --sync-color: var(--accent);
+}
+
+.sync-box.needs-permission {
+  --sync-color: #d97706;
+}
+
+.sync-box.error {
+  --sync-color: var(--danger);
+}
+
+.sync-name {
+  font-weight: 600;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.sync-state {
+  font-size: 12px;
+  color: var(--muted);
+  overflow-wrap: anywhere;
+}
+
+.sync-chip {
+  flex-shrink: 0;
+  font-size: 13px;
+  padding: 1px 4px;
+  border-radius: 6px;
+  border: 1px solid #16a34a;
+}
+
+.sync-chip.needs-permission {
+  border-color: #d97706;
+}
+
+.sync-chip.error {
+  border-color: var(--danger);
+}
+
