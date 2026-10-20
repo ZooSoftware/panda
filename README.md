@@ -63,7 +63,7 @@ System / Light / Dark theme.
 
 | In File | Does |
 |---|---|
-| **Open file (live sync)** / **Save to file (live sync)** | links a `.json` on disk: your edits are written to it as you work, and changes made to it elsewhere (git, an AI agent) load into the editor. Chrome and Edge. |
+| **Open file (live sync)** / **Save to file (live sync)** | links a `.json` on disk: your edits are written to it as you work, and changes made to it elsewhere (your editor, git, an AI agent) load into panda. If the file is saved half-edited and isn't valid, sync pauses instead of overwriting it. Chrome and Edge. |
 | **Import JSON** / **Export JSON** | open or save a tree file |
 | **Export README (view only)** | a Markdown page with a Mermaid diagram, an outline and the pins, for reading on GitHub; panda can't open it again |
 | **Export image** | PNG, JPG or SVG of the whole diagram exactly as drawn (hidden branches stay hidden, pins kept) |

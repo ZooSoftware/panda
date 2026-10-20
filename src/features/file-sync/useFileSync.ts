@@ -22,6 +22,22 @@ export interface SyncState {
 }
 
 const WRITE_DELAY = 300; // ms after the last edit
+
+/** The tree without ids: a hand-written file without ids gets new ones on every read. */
+function sameTree(a: Tree, b: Tree): boolean {
+  const strip = (t: Tree) => JSON.stringify(t, (key, value) => (key === 'id' ? undefined : value));
+  return strip(a) === strip(b);
+}
+
+/** The parse error, with line and column when the browser reports a position. */
+function describe(e: unknown, text: string): string {
+  const cause = (e as Error).cause ?? e;
+  const message = (cause as Error).message ?? String(cause);
+  const at = message.match(/position (\d+)/);
+  if (!at) return message;
+  const before = text.slice(0, Number(at[1])).split('\n');
+  return `${message.replace(/\s*\(?at position \d+\)?/, '')} at line ${before.length}, column ${before[before.length - 1].length + 1}`;
+}
 const POLL_EVERY = 1000; // ms between checks for changes made outside the app
 
 /**
@@ -38,6 +54,9 @@ export function useFileSync(tree: Tree, loadTree: (tree: Tree) => void, onError:
   // The tree last loaded from the file: never written straight back.
   const fromFile = useRef<Tree | null>(null);
   const writing = useRef(false);
+  // The file on disk is invalid (e.g. saved mid-edit in a text editor): don't
+  // overwrite it until it is valid again, or those edits would be lost.
+  const paused = useRef(false);
   const treeRef = useRef(tree);
   treeRef.current = tree;
 
@@ -58,6 +77,7 @@ export function useFileSync(tree: Tree, loadTree: (tree: Tree) => void, onError:
       }
       handle.current = h;
       pending.current = null;
+      paused.current = false;
       setSync({ name: h.name, status: 'synced', at: Date.now() });
       await rememberHandle(h);
     },
@@ -118,7 +138,7 @@ export function useFileSync(tree: Tree, loadTree: (tree: Tree) => void, onError:
     const h = handle.current;
     if (!h || tree === fromFile.current) return;
     const timer = setTimeout(async () => {
-      if (handle.current !== h) return;
+      if (handle.current !== h || paused.current) return;
       const text = toJSON(tree);
       if (text === known.current.text) return;
       writing.current = true;
@@ -148,13 +168,26 @@ export function useFileSync(tree: Tree, loadTree: (tree: Tree) => void, onError:
         const text = await file.text();
         if (writing.current || handle.current !== h) return;
         known.current = { text, modified: file.lastModified };
-        if (text === toJSON(treeRef.current)) return;
-        const loaded = importText(text);
+        let loaded: Tree;
+        try {
+          loaded = importText(text);
+        } catch (e) {
+          paused.current = true;
+          update({
+            status: 'error',
+            message: `Paused: the file isn't a valid tree (${describe(e, text)}). Fix it and sync resumes; edits here aren't saved until then.`,
+          });
+          return;
+        }
+        const wasPaused = paused.current;
+        paused.current = false;
+        // Same tree, only formatted differently (e.g. a final newline): nothing to load.
+        if (!wasPaused && sameTree(loaded, treeRef.current)) return update({ status: 'synced', message: undefined });
         fromFile.current = loaded;
         loadTree(loaded);
         update({ status: 'synced', at: Date.now(), message: undefined });
       } catch (e) {
-        update({ status: 'error', message: `The file changed but can't be read: ${(e as Error).message}` });
+        update({ status: 'error', message: `Can't read the file: ${(e as Error).message}` });
       }
     }, POLL_EVERY);
     return () => clearInterval(id);

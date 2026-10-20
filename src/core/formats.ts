@@ -132,8 +132,10 @@ export function importText(text: string): Tree {
   let data: unknown;
   try {
     data = JSON.parse(text);
-  } catch {
-    throw new TreeFormatError('not a panda tree: the file is not valid JSON (run `bun run check` on it for details)');
+  } catch (e) {
+    throw new TreeFormatError('not a panda tree: the file is not valid JSON (run `bun run check` on it for details)', {
+      cause: e,
+    });
   }
   return parseTree(data);
 }

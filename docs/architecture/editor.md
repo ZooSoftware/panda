@@ -85,7 +85,8 @@ next to the title.
 | Direction | How |
 |---|---|
 | App → file | 300ms after the last edit, `toJSON(tree)` is written if it differs from what the file holds |
-| File → app | every second, if the file's `lastModified` changed and its text isn't what the app would write, `importText` loads it |
+| File → app | every second, if the file's `lastModified` changed, it is read with `importText`. The same tree in different formatting (compared without ids) is ignored, so the selection stays; a different tree replaces the app's |
+| Invalid file | when the file can't be read (e.g. saved mid-edit in a text editor), sync **pauses**: nothing is written to it, so those edits are never overwritten, and the status says so with the parse error's line and column. Once the file is valid again it is loaded (the file wins) and writing resumes |
 | Reload | the handle is stored in IndexedDB (`panda` / `handles`); relinked at startup, or **Reconnect** if permission must be asked again |
 
 New tree and Import call `stop()` before replacing the tree. Chrome and Edge only.
