@@ -34,7 +34,7 @@ export function FileSyncControls({ fileSync, suggestedName }: { fileSync: FileSy
   }
   return (
     <>
-      <button onClick={fileSync.open} title="Open a .md or .json file and keep it in sync while you edit">
+      <button onClick={fileSync.open} title="Open a panda .json file and keep it in sync while you edit">
         🔗 Open file (live sync)…
       </button>
       <button

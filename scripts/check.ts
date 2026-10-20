@@ -1,15 +1,15 @@
 #!/usr/bin/env bun
-// Checks panda tree files the way the app reads them: an outline written by a
-// person or an AI agent, an exported README, or JSON. Rules:
-// docs/reference/outline-format.md
+// Checks panda tree files like a compiler: JSON syntax, the JSON Schema
+// (src/core/panda-tree.schema.json), and the rules a schema can't express.
+// Guide: docs/reference/json-format.md
 //
-//   bun run check tree.md other.md       one line per problem, then a summary
-//   bun run check tree.md --json         machine-readable, for agents
+//   bun run check tree.json other.json     one line per problem, then a summary
+//   bun run check tree.json --json         machine-readable, for agents
 //
-// Exit code: 0 when every file loads, 1 when any file has errors, 2 on bad usage.
+// Exit code: 0 when every file opens in panda, 1 when any file has errors, 2 on bad usage.
 
-import { analyzeText, type Analysis } from '../src/core/formats';
 import { countLeaves, type Chain, type Tree } from '../src/core/tree';
+import { validateText } from './validate';
 
 interface Stats {
   points: number;
@@ -30,18 +30,11 @@ function stats(tree: Tree): Stats {
   return s;
 }
 
-const SOURCE: Record<NonNullable<Analysis['source']>, string> = {
-  json: 'JSON',
-  embedded: 'embedded data',
-  outline: 'outline',
-  'outline+embedded': 'edited outline, pins and colors kept from embedded data',
-};
-
 const args = process.argv.slice(2);
 const json = args.includes('--json');
 const files = args.filter((a) => !a.startsWith('--'));
 if (files.length === 0) {
-  console.error('usage: bun run check <file.md|file.json>... [--json]');
+  console.error('usage: bun run check <file.json>... [--json]');
   process.exit(2);
 }
 
@@ -51,27 +44,29 @@ for (const file of files) {
   const f = Bun.file(file);
   if (!(await f.exists())) {
     failed = true;
-    report.push({ file, ok: false, diagnostics: [{ line: 0, severity: 'error', message: 'file not found' }] });
-    if (!json) console.log(`${file}: error: file not found`);
+    const diagnostics = [{ line: 0, col: 0, severity: 'error', path: '', message: 'file not found' }];
+    if (json) report.push({ file, ok: false, diagnostics });
+    else console.log(`${file}: error: file not found`);
     continue;
   }
-  const { tree, source, diagnostics } = analyzeText(await f.text());
+  const { tree, diagnostics } = validateText(await f.text());
   const errors = diagnostics.filter((d) => d.severity === 'error').length;
   const warnings = diagnostics.length - errors;
   if (errors > 0) failed = true;
 
   if (json) {
-    report.push({ file, ok: errors === 0, source, title: tree?.title, stats: tree ? stats(tree) : undefined, diagnostics });
+    report.push({ file, ok: errors === 0, title: tree?.title, stats: tree ? stats(tree) : undefined, diagnostics });
     continue;
   }
-  for (const d of diagnostics) console.log(`${file}:${d.line}: ${d.severity}: ${d.message}`);
+  for (const d of diagnostics) {
+    console.log(`${file}:${d.line}:${d.col}: ${d.severity}${d.path ? ` at ${d.path}` : ''}: ${d.message}`);
+  }
   if (errors > 0) {
-    const fallback = tree ? ' (the app would open the embedded data instead, losing the outline edits)' : '';
-    console.log(`${file}: ${errors} error${errors > 1 ? 's' : ''}, ${warnings} warning${warnings === 1 ? '' : 's'}${fallback}`);
+    console.log(`${file}: ${errors} error${errors > 1 ? 's' : ''}, ${warnings} warning${warnings === 1 ? '' : 's'}`);
   } else if (tree) {
     const s = stats(tree);
     console.log(
-      `${file}: ok · "${tree.title}" · ${s.points} points, ${s.leaves} leaves, ${s.branches} branches · from ${SOURCE[source!]}` +
+      `${file}: ok · "${tree.title}" · ${s.points} points, ${s.leaves} leaves, ${s.branches} branches` +
         (warnings ? ` · ${warnings} warning${warnings > 1 ? 's' : ''}` : ''),
     );
   }

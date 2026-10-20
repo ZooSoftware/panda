@@ -1,27 +1,10 @@
-import { PALETTE, countDescendants, parseTree, TreeFormatError, type Chain, type Point, type Tree } from './tree';
-import { escapeContentLine, parseOutline, type Diagnostic } from './outline';
+import { countDescendants, parseTree, TreeFormatError, type Chain, type Point, type Tree } from './tree';
 
 export const FORMAT = 'panda-tree';
 export const FORMAT_VERSION = 1;
 
 export function toJSON(tree: Tree): string {
   return JSON.stringify({ format: FORMAT, version: FORMAT_VERSION, ...tree }, null, 2);
-}
-
-// The README embeds the full tree as base64 JSON in an HTML comment, which is
-// invisible on GitHub but lets the same file be imported back losslessly.
-const EMBED_RE = /<!--\s*panda-tree:v1\s+([A-Za-z0-9+/=]+)\s*-->/;
-
-function encodeBase64(text: string): string {
-  const bytes = new TextEncoder().encode(text);
-  let bin = '';
-  bytes.forEach((b) => (bin += String.fromCharCode(b)));
-  return btoa(bin);
-}
-
-function decodeBase64(b64: string): string {
-  const bin = atob(b64);
-  return new TextDecoder().decode(Uint8Array.from(bin, (c) => c.charCodeAt(0)));
 }
 
 function mermaidLabel(text: string): string {
@@ -54,6 +37,11 @@ export function toMermaid(tree: Tree): string {
   };
   walk(tree.root);
   return [...lines, ...styles].join('\n');
+}
+
+/** Escapes a content line that Markdown would otherwise render as a list item. */
+function escapeContentLine(line: string): string {
+  return line.replace(/^(\d+)([.)])(\s)/, '$1\\$2$3').replace(/^([-*+])(\s)/, '\\$1$2');
 }
 
 export function toOutline(tree: Tree): string {
@@ -119,6 +107,7 @@ export function toPins(tree: Tree): string {
   ].join('\n');
 }
 
+/** A README to read the tree on GitHub. One-way: panda opens only JSON (docs/decisions/0017). */
 export function toMarkdown(tree: Tree): string {
   return [
     `# ${tree.title}`,
@@ -135,110 +124,16 @@ export function toMarkdown(tree: Tree): string {
     '',
     toPins(tree),
     '',
-    `<!-- panda-tree:v1 ${encodeBase64(JSON.stringify(tree))} -->`,
-    '',
   ].join('\n');
 }
 
-export type Source = 'json' | 'embedded' | 'outline' | 'outline+embedded';
-
-export interface Analysis {
-  /** Null when the file can't be loaded. */
-  tree: Tree | null;
-  /** Where the tree came from. */
-  source?: Source;
-  diagnostics: Diagnostic[];
-}
-
-/** Structure and text only: what the outline can express (no ids, colors, pins). */
-function fingerprint(tree: Tree): string {
-  const chain = (c: Chain): unknown => c.map((p) => [p.kind, p.title, p.content, p.branches.map(chain)]);
-  return JSON.stringify([tree.title, chain(tree.root)]);
-}
-
-/** Every point keyed by the titles on its path from the main chain; repeats get a counter. */
-function byTitlePath(tree: Tree): Map<string, Point> {
-  const keys = new Map<string, Point>();
-  const walk = (chain: Chain, path: string) =>
-    chain.forEach((p) => {
-      let key = `${path}\u001f${p.title}`;
-      for (let n = 2; keys.has(key); n++) key = `${path}\u001f${p.title}#${n}`;
-      keys.set(key, p);
-      p.branches.forEach((b) => walk(b, key));
-    });
-  walk(tree.root, '');
-  return keys;
-}
-
-/**
- * An outline edited after export: take its structure and text, and keep ids,
- * colors, pins and collapsed state from the embedded tree for every point that
- * is still at the same title path. Settings come from the embedded tree unless
- * the outline's front matter sets them.
- */
-function mergeOutline(outline: Tree, embedded: Tree, explicit: Partial<Tree>): Tree {
-  const previous = byTitlePath(embedded);
-  const used = new Set<string>();
-  for (const [key, p] of byTitlePath(outline)) {
-    const old = previous.get(key);
-    if (!old || old.kind !== p.kind || used.has(old.id)) continue;
-    used.add(old.id);
-    p.id = old.id;
-    if (p.color === (p.kind === 'leaf' ? PALETTE[2] : PALETTE[0])) p.color = old.color;
-    if (old.pin) p.pin = old.pin;
-    if (old.collapsed && p.branches.length > 0) p.collapsed = true;
-  }
-  return {
-    ...outline,
-    direction: explicit.direction ?? embedded.direction,
-    edgeStyle: explicit.edgeStyle ?? embedded.edgeStyle,
-    layout: explicit.layout ?? embedded.layout,
-  };
-}
-
-/**
- * Reads a JSON file, an exported README or a hand-written outline, and reports
- * every problem with its line. Used by the app's import and by `bun run check`.
- */
-export function analyzeText(text: string): Analysis {
-  if (text.trimStart().startsWith('{')) {
-    try {
-      return { tree: parseTree(JSON.parse(text)), source: 'json', diagnostics: [] };
-    } catch (e) {
-      return { tree: null, diagnostics: [{ line: 1, severity: 'error', message: `invalid panda-tree JSON: ${(e as Error).message}` }] };
-    }
-  }
-
-  const outline = parseOutline(text);
-  const embedded = text.match(EMBED_RE);
-  if (!embedded) return { tree: outline.tree, source: outline.tree ? 'outline' : undefined, diagnostics: outline.diagnostics };
-
-  let saved: Tree;
-  try {
-    saved = parseTree(JSON.parse(decodeBase64(embedded[1])));
-  } catch {
-    const line = text.slice(0, embedded.index).split('\n').length;
-    return {
-      tree: outline.tree,
-      source: outline.tree ? 'outline' : undefined,
-      diagnostics: [...outline.diagnostics, { line, severity: 'warning', message: 'the embedded tree data is corrupted and was ignored' }],
-    };
-  }
-  // A broken outline can't be read, so the app falls back to the embedded tree;
-  // the errors stay, because edits made to the outline would be lost.
-  if (!outline.tree) return { tree: saved, source: 'embedded', diagnostics: outline.diagnostics };
-  if (fingerprint(outline.tree) === fingerprint(saved)) return { tree: saved, source: 'embedded', diagnostics: outline.diagnostics };
-  return {
-    tree: mergeOutline(outline.tree, saved, outline.settings),
-    source: 'outline+embedded',
-    diagnostics: outline.diagnostics,
-  };
-}
-
-/** Accepts a JSON file, an exported README or a hand-written outline. */
+/** Reads a saved tree (JSON). Missing fields get their defaults; see parseTree. */
 export function importText(text: string): Tree {
-  const { tree, diagnostics } = analyzeText(text);
-  if (tree) return tree;
-  const errors = diagnostics.filter((d) => d.severity === 'error').slice(0, 3);
-  throw new TreeFormatError(errors.map((d) => `line ${d.line}: ${d.message}`).join('; '));
+  let data: unknown;
+  try {
+    data = JSON.parse(text);
+  } catch {
+    throw new TreeFormatError('not a panda tree: the file is not valid JSON (run `bun run check` on it for details)');
+  }
+  return parseTree(data);
 }

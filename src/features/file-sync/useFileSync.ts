@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
-import { importText } from '../../core/formats';
+import { importText, toJSON } from '../../core/formats';
 import type { Tree } from '../../core/tree';
 import {
   hasPermission,
@@ -8,7 +8,6 @@ import {
   readFile,
   recallHandle,
   rememberHandle,
-  serializeFor,
   writeFile,
 } from './fileSync';
 
@@ -54,7 +53,7 @@ export function useFileSync(tree: Tree, loadTree: (tree: Tree) => void, onError:
         fromFile.current = loaded;
         loadTree(loaded);
       } else {
-        const text = serializeFor(h.name, treeRef.current);
+        const text = toJSON(treeRef.current);
         known.current = { text, modified: await writeFile(h, text) };
       }
       handle.current = h;
@@ -120,7 +119,7 @@ export function useFileSync(tree: Tree, loadTree: (tree: Tree) => void, onError:
     if (!h || tree === fromFile.current) return;
     const timer = setTimeout(async () => {
       if (handle.current !== h) return;
-      const text = serializeFor(h.name, tree);
+      const text = toJSON(tree);
       if (text === known.current.text) return;
       writing.current = true;
       update({ status: 'saving' });
@@ -149,7 +148,7 @@ export function useFileSync(tree: Tree, loadTree: (tree: Tree) => void, onError:
         const text = await file.text();
         if (writing.current || handle.current !== h) return;
         known.current = { text, modified: file.lastModified };
-        if (text === serializeFor(h.name, treeRef.current)) return;
+        if (text === toJSON(treeRef.current)) return;
         const loaded = importText(text);
         fromFile.current = loaded;
         loadTree(loaded);

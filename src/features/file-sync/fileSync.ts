@@ -3,8 +3,6 @@
 // IndexedDB so the link survives a reload; the browser asks for permission
 // again after a reload, which needs a click.
 
-import { toJSON, toMarkdown } from '../../core/formats';
-import type { Tree } from '../../core/tree';
 
 // Parts of the API that TypeScript's DOM types don't include yet.
 type Permission = 'granted' | 'denied' | 'prompt';
@@ -26,7 +24,7 @@ declare global {
 
 export const fileSyncSupported = typeof window !== 'undefined' && 'showOpenFilePicker' in window;
 
-const TYPES = [{ description: 'Panda tree', accept: { 'text/markdown': ['.md'], 'application/json': ['.json'] } }];
+const TYPES = [{ description: 'Panda tree (JSON)', accept: { 'application/json': ['.json'] } }];
 
 export async function pickFileToOpen(): Promise<FileSystemFileHandle> {
   const [handle] = await window.showOpenFilePicker!({ types: TYPES });
@@ -35,11 +33,6 @@ export async function pickFileToOpen(): Promise<FileSystemFileHandle> {
 
 export async function pickFileToSave(suggestedName: string): Promise<FileSystemFileHandle> {
   return window.showSaveFilePicker!({ types: TYPES, suggestedName });
-}
-
-/** The file's format follows its extension: `.json` gets JSON, anything else the README. */
-export function serializeFor(fileName: string, tree: Tree): string {
-  return fileName.toLowerCase().endsWith('.json') ? toJSON(tree) : toMarkdown(tree);
 }
 
 /** True when we may read and write; asks the user only if `ask` (needs a click). */

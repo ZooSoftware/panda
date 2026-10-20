@@ -77,7 +77,7 @@ function Editor() {
             label: 'File',
             content: (
               <FileGroup
-                sync={<FileSyncControls fileSync={fileSync} suggestedName={`${slug(tree.title)}.md`} />}
+                sync={<FileSyncControls fileSync={fileSync} suggestedName={`${slug(tree.title)}.json`} />}
                 image={<ImageExportButtons onExport={exportImage} />}
                 onNew={() => {
                   fileSync.stop();
@@ -103,7 +103,7 @@ function Editor() {
       <input
         ref={fileInput}
         type="file"
-        accept=".json,.md,application/json,text/markdown"
+        accept=".json,application/json"
         hidden
         onChange={(e) => {
           const file = e.target.files?.[0];

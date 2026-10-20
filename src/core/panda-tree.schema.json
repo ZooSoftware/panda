@@ -1,0 +1,83 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "panda-tree.schema.json",
+  "title": "Panda tree",
+  "description": "A tree diagram of chains and branches. A chain is an ordered list of points; any point can grow branches (each another chain); a leaf ends its chain. Rules a schema can't express (a leaf must be the last point of its chain) are checked by `bun run check`. Guide: docs/reference/json-format.md",
+  "type": "object",
+  "required": ["root"],
+  "additionalProperties": false,
+  "properties": {
+    "$schema": { "type": "string", "description": "Path or URL of this schema, for editor support." },
+    "format": { "const": "panda-tree", "description": "Written by panda on export; optional." },
+    "version": { "const": 1, "description": "Written by panda on export; optional." },
+    "title": { "type": "string", "description": "The tree's title.", "default": "Untitled tree" },
+    "direction": {
+      "enum": ["LR", "TB", "RL", "BT"],
+      "description": "Flow of the main chain: LR left → right, TB top → bottom, RL, BT.",
+      "default": "LR"
+    },
+    "edgeStyle": {
+      "enum": ["sides", "shortest"],
+      "description": "sides: lines attach to fixed sides of the points. shortest: straight lines between the nearest borders.",
+      "default": "sides"
+    },
+    "layout": {
+      "enum": ["stacked", "packed"],
+      "description": "stacked: every branch gets its own rows. packed: compact, good for many leaves per point.",
+      "default": "stacked"
+    },
+    "root": { "$ref": "#/$defs/chain", "description": "The main chain." }
+  },
+  "$defs": {
+    "chain": {
+      "type": "array",
+      "description": "Points in order: each one follows the previous. Only the last point may be a leaf.",
+      "minItems": 1,
+      "items": { "$ref": "#/$defs/point" }
+    },
+    "point": {
+      "type": "object",
+      "required": ["title"],
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "type": "string",
+          "minLength": 1,
+          "description": "Stable id; generated when missing. Keep ids when editing a saved tree."
+        },
+        "kind": {
+          "enum": ["point", "leaf"],
+          "description": "leaf: ends its chain; must be the last point of its chain and has no branches.",
+          "default": "point"
+        },
+        "title": { "type": "string", "description": "Shown on the card." },
+        "content": { "type": "string", "description": "Plain text under the title; use \\n for new lines.", "default": "" },
+        "color": {
+          "type": "string",
+          "pattern": "^#([0-9a-fA-F]{6}|[0-9a-fA-F]{3})$",
+          "description": "Card color as #rrggbb or #rgb.",
+          "default": "#ffffff"
+        },
+        "pin": {
+          "type": "object",
+          "description": "Position set by dragging in the editor, in layout grid units. Usually left out.",
+          "required": ["col", "row"],
+          "additionalProperties": false,
+          "properties": {
+            "col": { "type": "number", "description": "Along the chain." },
+            "row": { "type": "number", "description": "Across the chain." }
+          }
+        },
+        "collapsed": { "const": true, "description": "Branches hidden in the editor. Omit when false." },
+        "branches": {
+          "type": "array",
+          "description": "Each branch is a chain (an array of points) starting beside this point. A side ending is a branch holding one leaf: [[{\"kind\": \"leaf\", \"title\": \"Done\"}]].",
+          "items": { "$ref": "#/$defs/chain" },
+          "default": []
+        }
+      },
+      "if": { "properties": { "kind": { "const": "leaf" } }, "required": ["kind"] },
+      "then": { "properties": { "branches": { "type": "array", "maxItems": 0 } } }
+    }
+  }
+}
