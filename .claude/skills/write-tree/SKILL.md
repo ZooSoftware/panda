@@ -1,22 +1,21 @@
 ---
 name: write-tree
-description: Write or edit a panda tree file (.md outline) from a description - follow docs/reference/outline-format.md, then run bun run check until it says ok. Use when asked to generate, draft or change a tree diagram as Markdown.
+description: Write or edit a panda tree file (JSON) from a description - follow docs/reference/json-format.md and the schema, then run bun run check until it says ok. Use when asked to generate, draft or change a tree diagram.
 ---
 
 # Write a panda tree
 
-1. Read `docs/reference/outline-format.md` (the rules) if it isn't in context.
-2. Plan the tree: what is the main chain (sequence), what splits off (branches), what ends a
-   path (leaves, always last in their chain; several endings = several leaf branches).
-3. Write the file: front matter only if a setting differs from the default (`layout: packed`
-   for many leaves per point), a `# Title`, then the numbered list. Content goes on the lines
-   under a point, indented to its text; nothing after the bold title on the same line.
-4. Check it, and repeat until it says ok:
+1. Read `docs/reference/json-format.md` (the guide) if it isn't in context; the exact contract is
+   `src/core/panda-tree.schema.json`.
+2. Plan the tree: what is the main chain (sequence), what splits off (branches, each an array of
+   points), what ends a path (leaves: always last in their chain; several endings = several
+   branches holding one leaf each). Branches have no names: a label is the branch's first point.
+3. Write the JSON: `root` is the main chain; leave out every field that keeps its default; only
+   `title` is required on a point.
+4. Check it, and repeat until it says ok with no warnings:
    ```sh
    bun run check <file> --json
    ```
-   Fix each reported line; warnings are worth fixing too (ignored text, missing title).
-5. Editing a file panda exported: change the outline only. Leave the `<!-- panda-tree:v1 … -->`
-   comment, the Mermaid block and the Pins table as they are; renaming a point drops its pin
-   and color.
+5. Editing a saved tree: keep existing `id`s (pins and colors stay attached), give new points no
+   `id`, and leave `pin` and `collapsed` alone unless asked.
 6. Report the file path and the checker's summary line.

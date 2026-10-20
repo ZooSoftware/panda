@@ -1,6 +1,6 @@
 # 0016. The outline is an input format; an edited outline wins
 
-- **Status:** accepted
+- **Status:** superseded by [0017](0017-json-is-the-only-file-format.md)
 - **Date:** 2026-10-20
 - **Where:** "make the project friendly to AI: other agents generate a md based on our rules";
   supersedes "hand edits are not imported" in [0006](0006-readme-export-is-lossless.md) and
@@ -15,7 +15,7 @@ had to be a text format they can write, rules they can follow, and a way to chec
 ## Decision
 
 - The README's numbered-list **outline is an input format**, specified in
-  [outline-format.md](../reference/outline-format.md). Export writes it; import reads it.
+  `docs/reference/outline-format.md` (removed by 0017; see git history). Export writes it; import reads it.
 - Import order: JSON → outline. With embedded data present, an outline that matches it (same
   titles, kinds, content and nesting) loads the embedded tree unchanged; an outline that differs
   loads the outline and keeps ids, colors, pins and collapsed state for points at the same

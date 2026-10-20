@@ -21,7 +21,7 @@ and what else was considered. Records explain **why**; how things work today is 
 | [0003](0003-strictly-a-tree.md) | It is strictly a tree: branches never merge back | model | 2026-10-20 |
 | [0004](0004-pins-in-grid-units.md) | Pins are stored in grid units, so they rotate with the tree | layout | 2026-10-20 |
 | [0005](0005-view-state-saved-with-the-tree.md) | View state is saved with the tree | format | 2026-10-20 |
-| [0006](0006-readme-export-is-lossless.md) | The README export is lossless and lists every pin | format | 2026-10-20 |
+| [0006](0006-readme-export-is-lossless.md) | The README export lists every pin (lossless import superseded by 0017) | format | 2026-10-20 |
 | [0007](0007-changes-are-options-not-replacements.md) | Changes are options, not replacements | process | 2026-10-20 |
 | [0008](0008-react-flow-canvas-own-layout.md) | React Flow draws the canvas; the layout is our own | editor | 2026-10-20 |
 | [0009](0009-mouse-and-key-controls.md) | Left-drag selects, Shift adds, Ctrl moves forward points | editor | 2026-10-20 |
@@ -31,4 +31,5 @@ and what else was considered. Records explain **why**; how things work today is 
 | [0013](0013-live-file-sync-in-the-browser.md) | Live file sync runs in the browser (File System Access API) | export | 2026-10-20 |
 | [0014](0014-leaves-only-as-branches.md) | Leaves are added only as branches; no "End chain" | model | 2026-10-20 |
 | [0015](0015-feature-folders-and-a-pure-core.md) | Feature folders on top of a pure core | structure | 2026-10-20 |
-| [0016](0016-the-outline-is-an-input-format.md) | The outline is an input format; an edited outline wins | format | 2026-10-20 |
+| [0016](0016-the-outline-is-an-input-format.md) | ~~The outline is an input format~~ (superseded by 0017) | format | 2026-10-20 |
+| [0017](0017-json-is-the-only-file-format.md) | JSON is the only file format, checked by a JSON Schema | format | 2026-10-20 |

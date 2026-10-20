@@ -30,10 +30,10 @@ description: Test the panda editor end to end in Chrome (claude-in-chrome), back
      then decode the data URL. Don't print data URLs: the tool blocks them as query data.
    - Also back up and restore `localStorage['panda-ui']` when the test changes the panel or theme.
    - Live file sync: the system file picker can't be automated. Link an origin-private file
-     instead: `const fh = await (await navigator.storage.getDirectory()).getFileHandle('t.md',
+     instead: `const fh = await (await navigator.storage.getDirectory()).getFileHandle('t.json',
      { create: true }); await window.__pandaSync.link(fh, 'write')` (dev only). Afterwards click
      Stop sync (clears the remembered handle in IndexedDB, or the user's next reload relinks the
-     test file) and `removeEntry('t.md')`.
+     test file) and `removeEntry('t.json')`.
 6. **Restore** the user's tree, reload, and close your tab:
    ```js
    localStorage.setItem('panda-tree', localStorage.getItem('panda-tree-before-test'));

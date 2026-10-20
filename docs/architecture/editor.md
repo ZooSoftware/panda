@@ -43,7 +43,7 @@ The tree title plus three groups of controls:
 
 | Group | Controls |
 |---|---|
-| File | New tree · Import JSON or README · Export JSON · Export README · Export image (PNG, JPG, SVG) |
+| File | New tree · Import JSON · Export JSON · Export README (view only) · Export image (PNG, JPG, SVG) |
 | View | Rotate · Fit · Direction · Lines · Layout · Panel position · Theme |
 | Arrange | Collapse all / Expand all · Unpin all · a one-line controls hint |
 
@@ -77,15 +77,15 @@ side would pass 16000px). Why: [0012](../decisions/0012-image-export-captures-th
 
 ## Live file sync (`features/file-sync/`)
 
-**Open file (live sync)** links an existing `.md`/`.json` and loads it; **Save to file (live
+**Open file (live sync)** links an existing `.json` and loads it; **Save to file (live
 sync)** writes the current tree to a new file and links it. While linked, the File group shows
 the file, its state (synced at …, saving, Reconnect, error) and **Stop sync**, and a 🔗 chip sits
 next to the title.
 
 | Direction | How |
 |---|---|
-| App → file | 300ms after the last edit, `serializeFor(name, tree)` (README for `.md`, JSON for `.json`) is written if it differs from what the file holds |
-| File → app | every second, if the file's `lastModified` changed and its text isn't what the app would write, `importText` loads it; an edited outline wins over the embedded data ([0016](../decisions/0016-the-outline-is-an-input-format.md)) |
+| App → file | 300ms after the last edit, `toJSON(tree)` is written if it differs from what the file holds |
+| File → app | every second, if the file's `lastModified` changed and its text isn't what the app would write, `importText` loads it |
 | Reload | the handle is stored in IndexedDB (`panda` / `handles`); relinked at startup, or **Reconnect** if permission must be asked again |
 
 New tree and Import call `stop()` before replacing the tree. Chrome and Edge only.

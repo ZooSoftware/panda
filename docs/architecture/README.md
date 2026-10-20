@@ -20,8 +20,8 @@ src/
   core/                                    pure: no React, no DOM, no packages
     tree.ts        types · edits · capabilities · queries (visiblePoints, counts) · parseTree
     layout.ts      layoutGrid (stacked | packed) · toPixels / toPin · nextDirection
-    formats.ts     toJSON · toMarkdown (Mermaid, outline, pins, embedded data) · analyzeText · importText
-    outline.ts     parseOutline: a hand-written outline → tree + line-numbered diagnostics
+    formats.ts     toJSON · importText · toMarkdown (README view: Mermaid, outline, pins)
+    panda-tree.schema.json   the JSON Schema of a tree file
   shared/
     download.ts    saveUrl · download · slug
   features/
@@ -34,9 +34,10 @@ src/
   app/
     App.tsx        composition only: wires features together with props and slots
     usePreferences.ts · FileGroup / ViewGroup / ArrangeGroup · main.tsx · styles.css
-scripts/check.ts                           `bun run check`: analyzeText as a CLI (Bun)
+scripts/                                   `bun run check` (Bun): validate.ts = JSON syntax + schema (Ajv) + rules
 tests/                                     outside src/, mirroring it
-  core/            tree · layout · formats · outline tests
+  core/            tree · layout · formats tests
+  scripts/         checker tests
   fixtures.ts      trees shared by the tests
   architecture.test.ts
 ```
@@ -63,8 +64,8 @@ prop ("slot") instead of the feature importing it.
      ▲      │                                ▲                          │                  │
      │      │                          pin ?? auto cell                 └── drag stop ─────┘
      │      ├──► localStorage['panda-tree']   (every change)                 (toPin → setPins)
-     │      └──► toJSON / toMarkdown          (export buttons)
-     └────────── importText                    (Import button, or storage on load)
+     │      └──► toJSON / toMarkdown          (export buttons; README is a view only)
+     └────────── importText (JSON)             (Import button, live sync, or storage on load)
 ```
 
 - The **tree is the only state that matters**. React Flow's nodes are rebuilt from it after

@@ -1,7 +1,8 @@
 # Panda docs
 
 Panda is a web editor for **tree diagrams made of chains and branches**. These docs are the
-source of truth for what panda is, how it is built and why. There is no user guide yet.
+source of truth for what panda is, how it is built and why. The user guide is the top-level
+[README](../README.md).
 
 > **The most important rule: options, not replacements**
 > ([0007](decisions/0007-changes-are-options-not-replacements.md)). When a behaviour the user

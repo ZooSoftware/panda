@@ -11,6 +11,7 @@ Why: [0010](../decisions/0010-bun-vite-react.md).
 | UI | React | 18.3.1 | `features/`, `app/` | — |
 | Canvas (pan, zoom, drag, selection, edges) | React Flow (`@xyflow/react`) | 12.12.0 | `features/canvas/` | [react-flow.md](react-flow.md) |
 | Image export (PNG, JPG, SVG) | html-to-image (pinned: React Flow's docs use this version) | 1.11.11 | `features/image-export/` | [0012](../decisions/0012-image-export-captures-the-canvas.md) |
+| Tree file contract | JSON Schema 2020-12; Ajv compiles it in the checker (dev dependency only) | ajv 8.17.1 | `core/panda-tree.schema.json`, `scripts/validate.ts` | [0017](../decisions/0017-json-is-the-only-file-format.md) |
 | Live file sync | File System Access API + IndexedDB (browser built-ins, Chrome/Edge) | — | `features/file-sync/` | [0013](../decisions/0013-live-file-sync-in-the-browser.md) |
 | Font | Helvetica, then Arial (draw.io's default diagram font), no web font | — | `app/styles.css` | — |
 | Layout | our own grid layout (no library) | — | `core/layout.ts` | [layout](../architecture/layout.md) |

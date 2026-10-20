@@ -2,14 +2,14 @@
 
 A web editor for tree diagrams built from **chains** and **branches**: points chain one after
 another, any point can grow branches (each one another chain), and a **leaf** ends a chain.
-Every point and leaf has a title, plain-text content and a color. Trees import and export as
-JSON or as a README (Mermaid diagram + outline + pins).
+Every point and leaf has a title, plain-text content and a color. A tree is a JSON file
+checked by a JSON Schema; it also exports as a README (a one-way view) and as images.
 Source of truth: `docs/` (index: `docs/README.md`): `architecture/` (how it works),
 `decisions/` (one record per decision, the why), `reference/` (file formats), `techs/`,
 `roadmap.md` (done, later, open questions). Read the relevant part before a structural change;
 record a lasting decision as a new `docs/decisions/` record.
 
-Claude setup (rules, skills, hook): `.claude/README.md`. There is no user guide yet.
+Claude setup (rules, skills, hook): `.claude/README.md`. User guide: `README.md`.
 
 ## The most important rule: options, not replacements
 
@@ -34,14 +34,11 @@ If a change can't be an option (it changes what a saved tree means), ask the use
   direction ([0004](docs/decisions/0004-pins-in-grid-units.md)).
 - **View state is saved with the tree:** direction, line style, layout mode, pins and
   collapsed points ([0005](docs/decisions/0005-view-state-saved-with-the-tree.md)).
-- **The README export is lossless:** it embeds the full tree, so importing it gives the same
-  tree back, and every pin and collapsed point is also written in readable form
-  ([0006](docs/decisions/0006-readme-export-is-lossless.md)).
-- **The outline is an input format** others (and AI agents) write: an edited outline wins over
-  the embedded data, keeping pins and colors by title path
-  ([0016](docs/decisions/0016-the-outline-is-an-input-format.md)). The rules are
-  `docs/reference/outline-format.md`; `bun run check` must agree with the app, so both use
-  `analyzeText`.
+- **JSON is the only file format** ([0017](docs/decisions/0017-json-is-the-only-file-format.md)).
+  `src/core/panda-tree.schema.json` is the contract and `docs/reference/json-format.md` the guide
+  (also for AI agents). A file that passes `bun run check` must open in the app: the schema,
+  `parseTree` and `toJSON` change together, and a test checks every saved tree passes the schema.
+- **The README export is a one-way view** (Mermaid, outline, pins table); panda can't open it.
 - **Import is tolerant of old files:** a missing setting gets its old default; format
   changes are additive only.
 
@@ -58,8 +55,8 @@ src/
   core/            pure TypeScript: no React, no DOM, no packages
     tree.ts          types, editing operations, queries, counts, import validation (parseTree)
     layout.ts        grid layout (stacked | packed), grid ↔ pixel per direction
-    formats.ts       JSON, README (Mermaid + outline + pins + embedded data), analyzeText/import
-    outline.ts       parse a hand-written outline, with line-numbered diagnostics
+    formats.ts       JSON in/out, README view (Mermaid + outline + pins)
+    panda-tree.schema.json   JSON Schema of a tree file
   shared/          small helpers any layer may use (download, slug)
   features/        one folder per feature; imports core/ and shared/, never another feature
     editor/          useTreeEditor: tree, selection, edit actions, saving, Delete/Escape
@@ -67,12 +64,13 @@ src/
                      buildFlow (tree → nodes/edges), useFit
     inspector/       Inspector (one point), SelectionPanel (several)
     panel/           ControlPanel: tabs on a side, hover menus on top/bottom
-    file-sync/       live link to a .md/.json on disk (File System Access API)
+    file-sync/       live link to a .json on disk (File System Access API)
     image-export/    PNG/JPG/SVG capture of the canvas
   app/             composition: App, main, styles.css, usePreferences, the panel groups
-scripts/check.ts   `bun run check <file>`: the app's reading of a tree file, as diagnostics
+scripts/           `bun run check <file>`: check.ts (CLI), validate.ts (syntax + schema + rules)
 tests/             all tests, outside src/ and mirroring it
-  core/              tree, layout, formats, outline tests
+  core/              tree, layout, formats tests
+  scripts/           checker tests
   fixtures.ts        trees shared by the tests
   architecture.test.ts   enforces the import rules above
 ```
@@ -101,6 +99,6 @@ bun install          # also installs the husky git hooks (prepare script)
 bun run dev          # editor on http://localhost:5173
 bun run test         # vitest (not `bun test`: that is Bun's own runner)
 bun run typecheck    # tsc for the app, then for scripts/ (Bun types)
-bun run check f.md   # check a tree file (outline, README or JSON); --json for agents
+bun run check t.json # check a tree file like a compiler; --json for agents
 bun run build        # typecheck + production build into dist/
 ```

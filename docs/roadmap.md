@@ -13,28 +13,28 @@ option, never a silent replacement.
 5. Collapse a point's branches, Collapse all / Expand all; `▸ +N` hidden count.
 6. Leaf count `🍃 N` on every point with branches.
 7. Box selection and group drag; Ctrl+drag moves a point with everything forward of it.
-8. Import/export: JSON, and README (Mermaid + outline + pins + embedded tree, lossless).
+8. Import/export: JSON; README export (Mermaid + outline + pins) as a one-way view.
 9. ~~Built-in example trees~~ (removed; a new tree starts with one point).
 10. Claude setup and these docs; husky + commitlint for Conventional Commit messages.
 11. Control panel on any side (default left) with File / View / Arrange groups: tabs on a side,
     hover menus on top/bottom; the point panel sits opposite a side panel.
 12. Helvetica font (as draw.io); System / Light / Dark theme.
 13. Image export: PNG, JPG, SVG of the whole diagram as drawn.
-14. Live sync with a `.md`/`.json` file on disk, both directions, surviving reloads (Chrome/Edge).
+14. Live sync with a `.json` file on disk, both directions, surviving reloads (Chrome/Edge).
 15. Architecture cleanup: pure `core/`, feature folders, composition in `app/`, import rules
     enforced by a test ([0015](decisions/0015-feature-folders-and-a-pure-core.md)).
-16. AI-friendly authoring: the outline is an input format with written rules
-    ([outline-format](reference/outline-format.md)), `bun run check` with `--json`, and edited
-    outlines load (also through live sync) ([0016](decisions/0016-the-outline-is-an-input-format.md)).
+16. AI-friendly authoring: JSON is the only file format, with a JSON Schema, a written guide
+    ([json-format](reference/json-format.md)) and a compiler-style `bun run check` (`--json`),
+    tested with Haiku agents ([0017](decisions/0017-json-is-the-only-file-format.md)).
+17. User guide: the top-level README.
 
 ## Later
 
 - Undo / redo (the most useful missing feature).
-- A user guide (`README.md` at the top level).
 - Line style per connection, not only per tree.
-- Leaf count in the README outline.
-- `bun run check --fix` / `--format`: rewrite a file in the canonical outline form.
-- Match edited points by id instead of title path, if renames losing pins becomes a problem.
+- Leaf count in the README view.
+- `bun run check --fix`: rewrite a file in canonical form (defaults left out, stable order).
+- Publish the schema at a URL so `$schema` works from any folder.
 - Pure-SVG image export (no `foreignObject`), for vector editors ([0012](decisions/0012-image-export-captures-the-canvas.md)).
 - Rich content: Markdown, links, tags, status.
 - A layout mode that keeps a point's branches under the point itself, for the packed-layout quirk below.
