@@ -28,7 +28,7 @@ If a change can't be an option (it changes what a saved tree means), ask the use
 - **Leaf rules:** a leaf is the last point of its chain and has no branches. A point can grow
   **any number** of leaf branches ([0002](docs/decisions/0002-leaf-rules.md)). The editing
   operations and `parseTree` both enforce this.
-- **Edits are pure.** Every operation in `src/model/tree.ts` returns a new tree and never
+- **Edits are pure.** Every operation in `src/core/tree.ts` returns a new tree and never
   mutates its input (tested).
 - **Pins are in grid units** (`col` along a chain, `row` across), so they rotate with the
   direction ([0004](docs/decisions/0004-pins-in-grid-units.md)).
@@ -50,25 +50,36 @@ and script runner: never npm or pnpm. See `docs/techs/`.
 
 ```
 src/
-  model/        pure: no React, no DOM
-    tree.ts       types, editing operations, counts, import validation (parseTree)
-    layout.ts     grid layout (stacked | packed), grid ↔ pixel per direction
-    exporters.ts  JSON, README (Mermaid + outline + pins + embedded data), import
-    model.test.ts all tests
-  components/   ControlPanel (grouped controls), PointNode (node card, quick actions),
-                Inspector (point panel), FloatingEdge
-  exportImage.ts             PNG/JPG/SVG capture of the canvas (DOM)
-  fileSync.ts, useFileSync.ts live link to a .md/.json on disk (File System Access API)
-  App.tsx       editor state: tree, selection, drag/pin, toolbar, React Flow wiring
+  core/            pure TypeScript: no React, no DOM, no packages
+    tree.ts          types, editing operations, queries, counts, import validation (parseTree)
+    layout.ts        grid layout (stacked | packed), grid ↔ pixel per direction
+    formats.ts       JSON, README (Mermaid + outline + pins + embedded data), import
+  shared/          small helpers any layer may use (download, slug)
+  features/        one folder per feature; imports core/ and shared/, never another feature
+    editor/          useTreeEditor: tree, selection, edit actions, saving, Delete/Escape
+    canvas/          Canvas (React Flow, drag, pin, Ctrl+drag), PointNode, FloatingEdge,
+                     buildFlow (tree → nodes/edges), useFit
+    inspector/       Inspector (one point), SelectionPanel (several)
+    panel/           ControlPanel: tabs on a side, hover menus on top/bottom
+    file-sync/       live link to a .md/.json on disk (File System Access API)
+    image-export/    PNG/JPG/SVG capture of the canvas
+  app/             composition: App, main, styles.css, usePreferences, the panel groups
+tests/             all tests, outside src/ and mirroring it
+  core/              tree.test.ts, layout.test.ts, formats.test.ts
+  fixtures.ts        trees shared by the tests
+  architecture.test.ts   enforces the import rules above
 ```
 
-- `src/model/` must stay pure so it can be tested without a browser and reused later.
-- `App.tsx` holds state and wiring; logic about the tree goes into `src/model/` with a test.
+- `core/` must stay pure so it can be tested without a browser and reused later.
+- A new feature gets its own folder. Features talk through `app/`, which passes props and
+  slots; a feature never imports another ([0015](docs/decisions/0015-feature-folders-and-a-pure-core.md)).
+- `app/` only composes: logic goes into a feature (or `core/` if it is about the tree).
 
 ## Conventions
 
 - Match the surrounding code: comment density, naming, idiom.
-- New behaviour in `src/model/` gets a test in `src/model/model.test.ts`.
+- Tests live in `tests/`, never in `src/`; `tests/<path>/x.test.ts` tests `src/<path>/x.ts`.
+  New behaviour in `src/core/` gets a test in `tests/core/`.
 - A file format change updates `docs/reference/` in the same commit.
 - UI changes are verified in a real browser (`browser-test` skill), never on the user's own
   tree without a backup: it lives in `localStorage` under `panda-tree`.

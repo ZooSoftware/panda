@@ -1,4 +1,4 @@
-# Layout (`src/model/layout.ts`)
+# Layout (`src/core/layout.ts`)
 
 Layout happens on a **grid**: `col` runs along a chain, `row` runs across it. A point at
 `(c, r)` has its next point at `(c + 1, r)`, and each of its branches starts at `(c + 1, R)`

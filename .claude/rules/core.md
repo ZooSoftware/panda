@@ -1,9 +1,9 @@
 ---
 paths:
-  - "src/model/**"
+  - "src/core/**"
 ---
 
-# Model (`src/model/`)
+# Core (`src/core/`)
 
 - Pure TypeScript: no React, no DOM, no `localStorage`. The UI calls in; the model never calls out.
 - Every editing operation returns a new tree (`structuredClone` + mutate the clone) and never
@@ -19,4 +19,6 @@ paths:
 - Layout works in grid units (`col`, `row`); only `toPixels`/`toPin` know pixels. A new layout
   mode is a new `LayoutMode` value, never a change to an existing one
   ([0007](../../docs/decisions/0007-changes-are-options-not-replacements.md)).
-- Tests go in `model.test.ts`; run `bun run test`.
+- Tests live in `tests/core/` (`tree.test.ts`, `layout.test.ts`, `formats.test.ts`), with shared
+  trees in `tests/fixtures.ts`, never in `src/`; run `bun run test`. `tests/architecture.test.ts`
+  fails if core imports a package or anything outside `core/`.

@@ -1,13 +1,14 @@
-# Editor (`App.tsx`, `src/components/`)
+# Editor (`src/features/`, `src/app/`)
 
 ## State
 
 | State | Where | Notes |
 |---|---|---|
-| `tree` | `useState` in `Editor` | the only state that is saved |
-| `selectedIds` | `useState` | copied onto nodes when they are rebuilt; change with `select()` |
-| `nodes` | local copy of `buildNodes(tree)` | exists so React Flow can move nodes during a drag |
-| `follow` | ref | Ctrl+drag: start positions of the points that follow the dragged one |
+| `tree` | `useTreeEditor` (`features/editor`) | the only state that is saved; changed through its `actions`, `edit` (whole tree) and `replace` (another tree) |
+| `selectedIds` | `useTreeEditor` | owned here; the canvas mirrors it onto its nodes and reports React Flow's select changes back |
+| `nodes` | `Canvas`: local copy of `buildNodes(tree)` | exists so React Flow can move nodes during a drag |
+| `follow` | `Canvas`: ref | Ctrl+drag: start positions of the points that follow the dragged one |
+| preferences | `usePreferences` (`app/`) | panel position, tab, theme |
 
 `buildNodes` lays out the visible points and passes each node its point, direction, layout
 mode, capabilities, descendant count and leaf count. `buildEdges` makes chain edges (solid) and
@@ -36,7 +37,7 @@ top right when pinned (click to unpin), and on points with branches a bottom row
 `🍃 N` (leaf count) on the left and the collapse toggle on the right. Leaves are pill-shaped
 with a dashed border.
 
-## Control panel (`ControlPanel.tsx`)
+## Control panel (`features/panel/ControlPanel.tsx`, groups in `app/`)
 
 The tree title plus three groups of controls:
 
@@ -66,7 +67,7 @@ under `[data-theme='dark']`, or under `prefers-color-scheme: dark` when the them
 attribute). React Flow gets the same value as `colorMode`. Point cards keep the user's colors in
 both themes, so their text and badges use fixed dark `--node-*` tokens.
 
-## Image export (`src/exportImage.ts`)
+## Image export (`features/image-export/`)
 
 PNG, JPG or SVG of the **whole diagram as drawn now**: the React Flow viewport is captured with a
 transform that frames every rendered node at scale 1, with 40px padding and the theme's
@@ -74,7 +75,7 @@ background. Collapsed branches stay hidden, pins and line style stay as they are
 outlines are hidden during the capture (`.exporting`). PNG and JPG are rendered at 2× (less if a
 side would pass 16000px). Why: [0012](../decisions/0012-image-export-captures-the-canvas.md).
 
-## Live file sync (`src/fileSync.ts`, `src/useFileSync.ts`)
+## Live file sync (`features/file-sync/`)
 
 **Open file (live sync)** links an existing `.md`/`.json` and loads it; **Save to file (live
 sync)** writes the current tree to a new file and links it. While linked, the File group shows

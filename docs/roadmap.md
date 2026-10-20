@@ -20,6 +20,8 @@ option, never a silent replacement.
 12. Helvetica font (as draw.io); System / Light / Dark theme.
 13. Image export: PNG, JPG, SVG of the whole diagram as drawn.
 14. Live sync with a `.md`/`.json` file on disk, both directions, surviving reloads (Chrome/Edge).
+15. Architecture cleanup: pure `core/`, feature folders, composition in `app/`, import rules
+    enforced by a test ([0015](decisions/0015-feature-folders-and-a-pure-core.md)).
 10. Claude setup and these docs; husky + commitlint for Conventional Commit messages.
 
 ## Later

@@ -10,8 +10,9 @@ description: The working loop for a panda feature or fix - check it against the 
    does this replace a behaviour the user already has? Then make it an option that defaults to
    the old behaviour, or ask the user first. If the request is ambiguous in a way that changes
    what you build, ask.
-2. **Implement**: tree rules in `src/model/` (pure, with a test), wiring in `App.tsx`, display in
-   `src/components/`. New file fields are optional with the old default.
+2. **Implement**: tree rules in `src/core/` (pure, with a test in `tests/core/`); the feature in its own
+   `src/features/<name>/` (or the existing one it extends); wiring only in `src/app/`. Features
+   never import each other. New file fields are optional with the old default.
 3. **Test**: `bun run typecheck && bun run test`. Check the exit status, not a piped `tail`.
 4. **Verify for real** with the `browser-test` skill (back up and restore the user's tree).
    A bug found here gets fixed and a regression test.

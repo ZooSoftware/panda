@@ -1,4 +1,4 @@
-# Model (`src/model/tree.ts`)
+# Model (`src/core/tree.ts`)
 
 ## Types
 

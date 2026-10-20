@@ -1,6 +1,6 @@
 ---
 name: browser-test
-description: Test the panda editor end to end in Chrome (claude-in-chrome), backing up and restoring the user's own tree. Use after any change to src/App.tsx, src/components/ or src/styles.css, or to model code the UI shows.
+description: Test the panda editor end to end in Chrome (claude-in-chrome), backing up and restoring the user's own tree. Use after any change to src/app/, src/features/ or src/shared/, or to core code the UI shows.
 ---
 
 # Browser test of the editor
@@ -25,8 +25,8 @@ description: Test the panda editor end to end in Chrome (claude-in-chrome), back
    - `window.confirm` (loading an example) blocks the extension: set `window.confirm = () => true`
      first, then change the select with the native value setter and a `change` event.
    - The export buttons download files: don't click them without the user's OK. Test the text
-     exporters in `model.test.ts`; test images in the page with
-     `await import('/src/exportImage.ts')` (nodes rebuilt from `.react-flow__node` transforms),
+     exporters in `tests/core/formats.test.ts`; test images in the page with
+     `await import('/src/features/image-export/exportImage.ts')` (nodes rebuilt from `.react-flow__node` transforms),
      then decode the data URL. Don't print data URLs: the tool blocks them as query data.
    - Also back up and restore `localStorage['panda-ui']` when the test changes the panel or theme.
    - Live file sync: the system file picker can't be automated. Link an origin-private file

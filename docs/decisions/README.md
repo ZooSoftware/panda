@@ -30,3 +30,4 @@ and what else was considered. Records explain **why**; how things work today is 
 | [0012](0012-image-export-captures-the-canvas.md) | Image export captures the canvas as drawn | export | 2026-10-20 |
 | [0013](0013-live-file-sync-in-the-browser.md) | Live file sync runs in the browser (File System Access API) | export | 2026-10-20 |
 | [0014](0014-leaves-only-as-branches.md) | Leaves are added only as branches; no "End chain" | model | 2026-10-20 |
+| [0015](0015-feature-folders-and-a-pure-core.md) | Feature folders on top of a pure core | structure | 2026-10-20 |

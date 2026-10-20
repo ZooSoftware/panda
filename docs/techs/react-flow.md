@@ -2,7 +2,7 @@
 
 React Flow draws the canvas: nodes, edges, pan and zoom, dragging, box selection, the minimap
 and the zoom controls. It does **not** decide where nodes go; positions come from our layout
-(`model/layout.ts`) or from pins.
+(`core/layout.ts`) or from pins.
 
 | Feature | How we use it |
 |---|---|
