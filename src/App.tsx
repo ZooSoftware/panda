@@ -43,9 +43,9 @@ import {
   type Pin,
   type Point,
   type Tree,
-} from './model/tree';
-import { layoutGrid, nextDirection, toPin, toPixels } from './model/layout';
-import { importText, toJSON, toMarkdown } from './model/exporters';
+} from './core/tree';
+import { layoutGrid, nextDirection, toPin, toPixels } from './core/layout';
+import { importText, toJSON, toMarkdown } from './core/formats';
 import { NodeActionsContext, PointNode, type NodeActions, type PointNodeType } from './components/PointNode';
 import { Inspector } from './components/Inspector';
 import { FloatingEdge } from './components/FloatingEdge';

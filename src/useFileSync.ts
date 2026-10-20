@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
-import { importText } from './model/exporters';
-import type { Tree } from './model/tree';
+import { importText } from './core/formats';
+import type { Tree } from './core/tree';
 import {
   hasPermission,
   pickFileToOpen,

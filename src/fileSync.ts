@@ -3,8 +3,8 @@
 // IndexedDB so the link survives a reload; the browser asks for permission
 // again after a reload, which needs a click.
 
-import { toJSON, toMarkdown } from './model/exporters';
-import type { Tree } from './model/tree';
+import { toJSON, toMarkdown } from './core/formats';
+import type { Tree } from './core/tree';
 
 // Parts of the API that TypeScript's DOM types don't include yet.
 type Permission = 'granted' | 'denied' | 'prompt';
