@@ -43,16 +43,16 @@ import {
   type Pin,
   type Point,
   type Tree,
-} from './core/tree';
-import { layoutGrid, nextDirection, toPin, toPixels } from './core/layout';
-import { importText, toJSON, toMarkdown } from './core/formats';
-import { NodeActionsContext, PointNode, type NodeActions, type PointNodeType } from './components/PointNode';
-import { Inspector } from './components/Inspector';
-import { FloatingEdge } from './components/FloatingEdge';
-import { ControlPanel, PANEL_POSITIONS, type PanelPosition } from './components/ControlPanel';
-import { IMAGE_FORMATS, renderDiagramImage, type ImageFormat } from './exportImage';
-import { fileSyncSupported } from './fileSync';
-import { useFileSync, type SyncState } from './useFileSync';
+} from '../core/tree';
+import { layoutGrid, nextDirection, toPin, toPixels } from '../core/layout';
+import { importText, toJSON, toMarkdown } from '../core/formats';
+import { NodeActionsContext, PointNode, type NodeActions, type PointNodeType } from '../features/canvas/PointNode';
+import { Inspector } from '../features/inspector/Inspector';
+import { FloatingEdge } from '../features/canvas/FloatingEdge';
+import { ControlPanel, PANEL_POSITIONS, type PanelPosition } from '../features/panel/ControlPanel';
+import { IMAGE_FORMATS, renderDiagramImage, type ImageFormat } from '../features/image-export/exportImage';
+import { fileSyncSupported } from '../features/file-sync/fileSync';
+import { useFileSync, type SyncState } from '../features/file-sync/useFileSync';
 
 const STORAGE_KEY = 'panda-tree';
 // Per-browser UI preferences; not part of the tree, so not exported.

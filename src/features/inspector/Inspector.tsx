@@ -1,4 +1,4 @@
-import { PALETTE, countLeaves, type Capabilities, type Point } from '../core/tree';
+import { PALETTE, countLeaves, type Capabilities, type Point } from '../../core/tree';
 
 interface Props {
   point: Point;

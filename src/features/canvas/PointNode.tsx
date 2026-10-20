@@ -1,6 +1,6 @@
 import { createContext, memo, useContext, type CSSProperties } from 'react';
 import { Handle, NodeToolbar, Position, type Node, type NodeProps } from '@xyflow/react';
-import type { Capabilities, Direction, LayoutMode, Point } from '../core/tree';
+import type { Capabilities, Direction, LayoutMode, Point } from '../../core/tree';
 
 export type PointNodeData = {
   point: Point;
