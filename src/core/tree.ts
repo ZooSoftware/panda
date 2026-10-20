@@ -118,6 +118,18 @@ export function visibleBranches(point: Point): Chain[] {
   return point.collapsed ? [] : point.branches;
 }
 
+/** Every point not hidden inside a collapsed branch, in tree order. */
+export function visiblePoints(tree: Tree): Point[] {
+  const out: Point[] = [];
+  const walk = (chain: Chain) =>
+    chain.forEach((p) => {
+      out.push(p);
+      visibleBranches(p).forEach(walk);
+    });
+  walk(tree.root);
+  return out;
+}
+
 /** Number of points inside a point's branches, at any depth. */
 export function countDescendants(point: Point): number {
   return point.branches.reduce((sum, chain) => sum + chain.reduce((n, p) => n + 1 + countDescendants(p), 0), 0);

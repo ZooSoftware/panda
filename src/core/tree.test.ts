@@ -14,6 +14,7 @@ import {
   reopen,
   setAllCollapsed,
   setCollapsed,
+  visiblePoints,
   type Tree,
 } from './tree';
 import { tree, yearsTree } from './fixtures';
@@ -94,6 +95,11 @@ describe('queries', () => {
     expect(countLeaves(t.root[0])).toBe(2);
     expect(countLeaves(makePoint())).toBe(0);
     expect(countLeaves(yearsTree(1, 5, 'stacked').root[0])).toBe(5);
+  });
+
+  it('lists visible points, skipping collapsed branches', () => {
+    expect(visiblePoints(tree()).map((p) => p.id)).toEqual(['a', 'b', 'b1', 'c']);
+    expect(visiblePoints(setCollapsed(tree(), 'b', true)).map((p) => p.id)).toEqual(['a', 'b', 'c']);
   });
 
   it('finds the points forward of a point, branches included', () => {
