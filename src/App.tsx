@@ -53,27 +53,21 @@ import { ControlPanel, PANEL_POSITIONS, type PanelPosition } from './components/
 import { IMAGE_FORMATS, renderDiagramImage, type ImageFormat } from './exportImage';
 import { fileSyncSupported } from './fileSync';
 import { useFileSync, type SyncState } from './useFileSync';
-import { sampleTree } from './sample';
-import { literatureReviewTree } from './examples/literatureReview';
 
 const STORAGE_KEY = 'panda-tree';
 // Per-browser UI preferences; not part of the tree, so not exported.
 const UI_KEY = 'panda-ui';
 const nodeTypes = { point: PointNode };
 const edgeTypes = { floating: FloatingEdge };
-const EXAMPLES: Record<string, () => Tree> = {
-  'Learn web development': sampleTree,
-  'Literature review (60 papers)': literatureReviewTree,
-};
 
 function loadSaved(): Tree {
   try {
     const raw = localStorage.getItem(STORAGE_KEY);
     if (raw) return importText(raw);
   } catch {
-    // Unreadable storage or stale data: fall back to the sample.
+    // Unreadable storage or stale data: start a new tree.
   }
-  return sampleTree();
+  return makeTree();
 }
 
 type Theme = 'system' | 'light' | 'dark';
@@ -449,30 +443,6 @@ function Editor() {
           ))}
         </div>
       </div>
-      <label className="field">
-        Load example
-        <select
-          value=""
-          onChange={(e) => {
-            const make = EXAMPLES[e.target.value];
-            if (make && window.confirm('Replace the current tree with this example?')) {
-              fileSync.stop();
-              setTree(make());
-              select([]);
-              refit();
-            }
-          }}
-        >
-          <option value="" disabled>
-            Choose…
-          </option>
-          {Object.keys(EXAMPLES).map((name) => (
-            <option key={name} value={name}>
-              {name}
-            </option>
-          ))}
-        </select>
-      </label>
     </div>
   );
 

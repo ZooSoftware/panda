@@ -19,8 +19,35 @@ import {
 } from './tree';
 import { layoutGrid, toPin, toPixels } from './layout';
 import { importText, toJSON, toMarkdown } from './exporters';
-import { sampleTree } from '../sample';
-import { literatureReviewTree } from '../examples/literatureReview';
+
+/** Years on the main chain, each growing `perYear` single-leaf branches. */
+function yearsTree(years: number, perYear: number, layout: Tree['layout']): Tree {
+  return {
+    ...tree(),
+    layout,
+    root: Array.from({ length: years }, () =>
+      makePoint({ branches: Array.from({ length: perYear }, () => [makePoint({ kind: 'leaf' })]) }),
+    ),
+  };
+}
+
+/** Chains, branches of branches and leaves at several depths. */
+function nestedTree(layout: Tree['layout']): Tree {
+  const leaf = () => makePoint({ kind: 'leaf' });
+  return {
+    ...tree(),
+    layout,
+    root: [
+      makePoint(),
+      makePoint({ branches: [[makePoint(), makePoint(), leaf()]] }),
+      makePoint({
+        branches: [[makePoint({ branches: [[leaf()]] }), makePoint()], [makePoint()]],
+      }),
+      makePoint(),
+      leaf(),
+    ],
+  };
+}
 
 function tree(): Tree {
   return {
@@ -85,7 +112,7 @@ describe('editing', () => {
     const t: Tree = { ...tree(), root: [p, makePoint({ kind: 'leaf' })] };
     expect(countLeaves(t.root[0])).toBe(2);
     expect(countLeaves(makePoint())).toBe(0);
-    expect(countLeaves(literatureReviewTree().root[0])).toBe(2);
+    expect(countLeaves(yearsTree(1, 5, 'stacked').root[0])).toBe(5);
   });
 
   it('finds the points forward of a point, branches included', () => {
@@ -141,7 +168,7 @@ describe('layout', () => {
   });
 
   it('never overlaps nodes, even with nested branches', () => {
-    for (const t of [sampleTree(), { ...sampleTree(), layout: 'packed' as const }, literatureReviewTree()]) {
+    for (const t of [nestedTree('stacked'), nestedTree('packed'), yearsTree(12, 5, 'stacked'), yearsTree(12, 5, 'packed')]) {
       const cells = [...layoutGrid(t).values()].map((c) => `${c.col},${c.row}`);
       expect(new Set(cells).size).toBe(cells.length);
     }
@@ -171,9 +198,11 @@ describe('layout', () => {
     expect(grid.get('q')).toEqual({ col: 1, row: 3 });
   });
 
-  it('packs the literature review into a few rows', () => {
-    const rows = [...layoutGrid(literatureReviewTree()).values()].map((c) => c.row);
-    expect(Math.max(...rows)).toBe(5);
+  it('packs many single-leaf branches into a few rows', () => {
+    // 12 points with 5 leaves each: stacked needs a row per leaf, packed only 5.
+    const maxRow = (t: Tree) => Math.max(...[...layoutGrid(t).values()].map((c) => c.row));
+    expect(maxRow(yearsTree(12, 5, 'stacked'))).toBe(60);
+    expect(maxRow(yearsTree(12, 5, 'packed'))).toBe(5);
   });
 
   it('round-trips pins through every direction', () => {

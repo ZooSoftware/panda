@@ -14,7 +14,7 @@ option, never a silent replacement.
 6. Leaf count `🍃 N` on every point with branches.
 7. Box selection and group drag; Ctrl+drag moves a point with everything forward of it.
 8. Import/export: JSON, and README (Mermaid + outline + pins + embedded tree, lossless).
-9. Examples: "Learn web development", "Literature review (60 papers)".
+9. ~~Built-in example trees~~ (removed; a new tree starts with one point).
 11. Control panel on any side (default left) with File / View / Arrange groups: tabs on a side,
     hover menus on top/bottom; the point panel sits opposite a side panel.
 12. Helvetica font (as draw.io); System / Light / Dark theme.

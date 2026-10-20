@@ -42,7 +42,7 @@ The tree title plus three groups of controls:
 
 | Group | Controls |
 |---|---|
-| File | New tree · Import JSON or README · Export JSON · Export README · Export image (PNG, JPG, SVG) · Load example (asks first) |
+| File | New tree · Import JSON or README · Export JSON · Export README · Export image (PNG, JPG, SVG) |
 | View | Rotate · Fit · Direction · Lines · Layout · Panel position · Theme |
 | Arrange | Collapse all / Expand all · Unpin all · a one-line controls hint |
 
@@ -87,11 +87,11 @@ next to the title.
 | File → app | every second, if the file's `lastModified` changed and its text isn't what the app would write, `importText` loads it |
 | Reload | the handle is stored in IndexedDB (`panda` / `handles`); relinked at startup, or **Reconnect** if permission must be asked again |
 
-New tree, Import and Load example call `stop()` before replacing the tree. Chrome and Edge only.
+New tree and Import call `stop()` before replacing the tree. Chrome and Edge only.
 Why: [0013](../decisions/0013-live-file-sync-in-the-browser.md).
 
 ## Persistence
 
 Every change is written to `localStorage['panda-tree']` as the export JSON. On load the app
 reads it through `importText`, so stored trees get the same validation and defaults as imported
-files; unreadable data falls back to the sample tree.
+files; with nothing stored (or unreadable data) it starts a new tree with one point.

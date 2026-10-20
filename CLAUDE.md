@@ -57,10 +57,8 @@ src/
     model.test.ts all tests
   components/   ControlPanel (grouped controls), PointNode (node card, quick actions),
                 Inspector (point panel), FloatingEdge
-  examples/     example trees (literature review)
   exportImage.ts             PNG/JPG/SVG capture of the canvas (DOM)
   fileSync.ts, useFileSync.ts live link to a .md/.json on disk (File System Access API)
-  sample.ts     the first-launch tree
   App.tsx       editor state: tree, selection, drag/pin, toolbar, React Flow wiring
 ```
 

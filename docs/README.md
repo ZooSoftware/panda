@@ -43,7 +43,7 @@ A tree diagram where **sequence** and **divergence** are different things:
 
 Mind-map tools treat every child the same; panda keeps "what comes next" apart from "what
 splits off", which fits roadmaps, decision paths, story plots and literature reviews (years on
-the main chain, papers as leaves: see the example in `src/examples/`).
+the main chain, papers as leaves).
 
 ```
  Start ──► HTML & CSS ──► JavaScript ──► A framework ──► 🍃 Ship a project     main chain
