@@ -39,7 +39,16 @@ The file ends with the full tree as base64-encoded JSON in an HTML comment (invi
 
 ## Import
 
-`importText` accepts a JSON file or a README. In a README only the embedded comment is read,
-so importing an exported README gives back exactly the same tree
-([0006](../decisions/0006-readme-export-is-lossless.md)). Hand edits to the Mermaid, outline or
-pins table are not imported; a README without the comment fails with a clear error.
+`importText` (through `analyzeText`) accepts a JSON file, an exported README, or a hand-written
+outline ([outline-format.md](outline-format.md)):
+
+| File | What loads |
+|---|---|
+| README whose outline matches the embedded data | the embedded tree, exactly ([0006](../decisions/0006-readme-export-is-lossless.md)) |
+| README whose outline was edited | the outline, keeping ids, colors, pins and collapsed state of points at an unchanged title path ([0016](../decisions/0016-the-outline-is-an-input-format.md)) |
+| README whose edited outline has errors | the embedded tree; the errors are reported (`bun run check`) |
+| Outline without embedded data | the outline |
+
+Content lines that would read as list items are escaped on export (`1\. step`, `\- note`), so
+the outline always reads back as the same tree. Edits to the Mermaid block or the Pins table
+have no effect; they are regenerated on the next export.

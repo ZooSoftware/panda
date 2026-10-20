@@ -7,6 +7,7 @@ lockfiles, and `settings.json` denies them).
 |---|---|
 | Install | `bun install` (lockfile: `bun.lock`), `bun add <pkg>`, `bun add -d <pkg>` |
 | Scripts | `bun run dev`, `bun run test`, `bun run typecheck`, `bun run build` |
+| CLI | `bun run check <file>` runs `scripts/check.ts`, which imports `src/core/` directly; `scripts/tsconfig.json` adds Bun's types only there |
 | One-off scripts | `bun some-script.ts` runs TypeScript directly, e.g. to print `toMarkdown(makeTree())` |
 
 ## Git hooks

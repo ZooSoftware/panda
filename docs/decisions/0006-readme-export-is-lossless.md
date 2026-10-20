@@ -1,6 +1,6 @@
 # 0006. The README export is lossless and lists every pin
 
-- **Status:** accepted
+- **Status:** accepted; "hand edits are not imported" is superseded by [0016](0016-the-outline-is-an-input-format.md)
 - **Date:** 2026-10-20
 - **Where:** "input and export a diagram as readme"; "all pinning need to be written down in the
   markdown"; `model/exporters.ts`

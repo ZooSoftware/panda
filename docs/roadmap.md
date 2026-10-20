@@ -15,6 +15,7 @@ option, never a silent replacement.
 7. Box selection and group drag; Ctrl+drag moves a point with everything forward of it.
 8. Import/export: JSON, and README (Mermaid + outline + pins + embedded tree, lossless).
 9. ~~Built-in example trees~~ (removed; a new tree starts with one point).
+10. Claude setup and these docs; husky + commitlint for Conventional Commit messages.
 11. Control panel on any side (default left) with File / View / Arrange groups: tabs on a side,
     hover menus on top/bottom; the point panel sits opposite a side panel.
 12. Helvetica font (as draw.io); System / Light / Dark theme.
@@ -22,7 +23,9 @@ option, never a silent replacement.
 14. Live sync with a `.md`/`.json` file on disk, both directions, surviving reloads (Chrome/Edge).
 15. Architecture cleanup: pure `core/`, feature folders, composition in `app/`, import rules
     enforced by a test ([0015](decisions/0015-feature-folders-and-a-pure-core.md)).
-10. Claude setup and these docs; husky + commitlint for Conventional Commit messages.
+16. AI-friendly authoring: the outline is an input format with written rules
+    ([outline-format](reference/outline-format.md)), `bun run check` with `--json`, and edited
+    outlines load (also through live sync) ([0016](decisions/0016-the-outline-is-an-input-format.md)).
 
 ## Later
 
@@ -30,8 +33,8 @@ option, never a silent replacement.
 - A user guide (`README.md` at the top level).
 - Line style per connection, not only per tree.
 - Leaf count in the README outline.
-- Import a hand-written README outline (no embedded data). With live sync this would let hand
-  edits to the outline flow into the app; today they are ignored and regenerated.
+- `bun run check --fix` / `--format`: rewrite a file in the canonical outline form.
+- Match edited points by id instead of title path, if renames losing pins becomes a problem.
 - Pure-SVG image export (no `foreignObject`), for vector editors ([0012](decisions/0012-image-export-captures-the-canvas.md)).
 - Rich content: Markdown, links, tags, status.
 - A layout mode that keeps a point's branches under the point itself, for the packed-layout quirk below.

@@ -6,6 +6,7 @@
 | Core rules | `rules/core.md` | when `src/core/**` is touched |
 | UI rules | `rules/ui.md` | when `src/app/**`, `src/features/**` or `src/shared/**` is touched |
 | `ship-feature` skill | the loop: check → implement → test → browser → docs → commit → report | on demand |
+| `write-tree` skill | describe a tree → `.md` outline → `bun run check` until ok | on demand |
 | `browser-test` skill | drive the editor in Chrome, backing up and restoring the user's tree | on demand |
 | commit guard hook | `hooks/guard-commit.ts`: before `git commit`, typecheck + tests must pass and no `dist/` or npm/pnpm lockfile may be staged | every Bash call (fast exit unless it is a commit) |
 | git `commit-msg` hook (husky) | `../.husky/commit-msg`: commitlint, Conventional Commits; applies to the user's commits too | every commit |

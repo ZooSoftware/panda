@@ -31,3 +31,4 @@ and what else was considered. Records explain **why**; how things work today is 
 | [0013](0013-live-file-sync-in-the-browser.md) | Live file sync runs in the browser (File System Access API) | export | 2026-10-20 |
 | [0014](0014-leaves-only-as-branches.md) | Leaves are added only as branches; no "End chain" | model | 2026-10-20 |
 | [0015](0015-feature-folders-and-a-pure-core.md) | Feature folders on top of a pure core | structure | 2026-10-20 |
+| [0016](0016-the-outline-is-an-input-format.md) | The outline is an input format; an edited outline wins | format | 2026-10-20 |

@@ -37,6 +37,11 @@ If a change can't be an option (it changes what a saved tree means), ask the use
 - **The README export is lossless:** it embeds the full tree, so importing it gives the same
   tree back, and every pin and collapsed point is also written in readable form
   ([0006](docs/decisions/0006-readme-export-is-lossless.md)).
+- **The outline is an input format** others (and AI agents) write: an edited outline wins over
+  the embedded data, keeping pins and colors by title path
+  ([0016](docs/decisions/0016-the-outline-is-an-input-format.md)). The rules are
+  `docs/reference/outline-format.md`; `bun run check` must agree with the app, so both use
+  `analyzeText`.
 - **Import is tolerant of old files:** a missing setting gets its old default; format
   changes are additive only.
 
@@ -53,7 +58,8 @@ src/
   core/            pure TypeScript: no React, no DOM, no packages
     tree.ts          types, editing operations, queries, counts, import validation (parseTree)
     layout.ts        grid layout (stacked | packed), grid ↔ pixel per direction
-    formats.ts       JSON, README (Mermaid + outline + pins + embedded data), import
+    formats.ts       JSON, README (Mermaid + outline + pins + embedded data), analyzeText/import
+    outline.ts       parse a hand-written outline, with line-numbered diagnostics
   shared/          small helpers any layer may use (download, slug)
   features/        one folder per feature; imports core/ and shared/, never another feature
     editor/          useTreeEditor: tree, selection, edit actions, saving, Delete/Escape
@@ -64,8 +70,9 @@ src/
     file-sync/       live link to a .md/.json on disk (File System Access API)
     image-export/    PNG/JPG/SVG capture of the canvas
   app/             composition: App, main, styles.css, usePreferences, the panel groups
+scripts/check.ts   `bun run check <file>`: the app's reading of a tree file, as diagnostics
 tests/             all tests, outside src/ and mirroring it
-  core/              tree.test.ts, layout.test.ts, formats.test.ts
+  core/              tree, layout, formats, outline tests
   fixtures.ts        trees shared by the tests
   architecture.test.ts   enforces the import rules above
 ```
@@ -93,6 +100,7 @@ tests/             all tests, outside src/ and mirroring it
 bun install          # also installs the husky git hooks (prepare script)
 bun run dev          # editor on http://localhost:5173
 bun run test         # vitest (not `bun test`: that is Bun's own runner)
-bun run typecheck    # tsc, no emit
+bun run typecheck    # tsc for the app, then for scripts/ (Bun types)
+bun run check f.md   # check a tree file (outline, README or JSON); --json for agents
 bun run build        # typecheck + production build into dist/
 ```

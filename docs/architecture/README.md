@@ -20,7 +20,8 @@ src/
   core/                                    pure: no React, no DOM, no packages
     tree.ts        types · edits · capabilities · queries (visiblePoints, counts) · parseTree
     layout.ts      layoutGrid (stacked | packed) · toPixels / toPin · nextDirection
-    formats.ts     toJSON · toMarkdown (Mermaid, outline, pins, embedded data) · importText
+    formats.ts     toJSON · toMarkdown (Mermaid, outline, pins, embedded data) · analyzeText · importText
+    outline.ts     parseOutline: a hand-written outline → tree + line-numbered diagnostics
   shared/
     download.ts    saveUrl · download · slug
   features/
@@ -33,8 +34,9 @@ src/
   app/
     App.tsx        composition only: wires features together with props and slots
     usePreferences.ts · FileGroup / ViewGroup / ArrangeGroup · main.tsx · styles.css
+scripts/check.ts                           `bun run check`: analyzeText as a CLI (Bun)
 tests/                                     outside src/, mirroring it
-  core/            tree.test.ts · layout.test.ts · formats.test.ts
+  core/            tree · layout · formats · outline tests
   fixtures.ts      trees shared by the tests
   architecture.test.ts
 ```

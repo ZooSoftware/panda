@@ -1,6 +1,6 @@
 # 0013. Live file sync runs in the browser (File System Access API)
 
-- **Status:** accepted
+- **Status:** accepted; outline edits are loaded since [0016](0016-the-outline-is-an-input-format.md)
 - **Date:** 2026-10-20
 - **Where:** "open a md then sync real time with it when I edit"; `src/fileSync.ts`, `src/useFileSync.ts`
 
